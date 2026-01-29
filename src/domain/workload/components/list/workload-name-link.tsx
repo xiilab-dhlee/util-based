@@ -43,9 +43,9 @@ export function WorkloadNameLink({
   const isAdmin = isAdminMode(pathname);
 
   // 워크로드 상세 페이지 링크
-  const userHref = ROUTES.USER_WORKLOAD_DETAIL(String(workspaceId), workloadId);
+  const userHref = ROUTES.USER_WORKLOAD_DETAIL(workspaceId, workloadId);
   const adminHref = ROUTES.ADMIN_WORKSPACE_WORKLOAD_DETAIL(
-    String(workspaceId),
+    workspaceId,
     workloadId,
   );
   const href = isAdmin ? adminHref : userHref;

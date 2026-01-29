@@ -4,26 +4,13 @@ import type { ResponsiveColumnType } from "xiilab-ui";
 import { getWorkspaceMemberRoleLabel } from "@/domain/workspace/constants/workspace.constant";
 import { DeleteWorkspaceMemberButton } from "@/domain/workspace-member/components/delete-workspace-member-button";
 import { UpdateWorkspaceMemberButton } from "@/domain/workspace-member/components/update-workspace-member-button";
-import { WorkspaceMemberAllCheck } from "@/domain/workspace-member/components/workspace-member-all-check";
-import { WorkspaceMemberItemCheck } from "@/domain/workspace-member/components/workspace-member-item-check";
 import type { WorkspaceMemberListType } from "@/domain/workspace-member/schemas/workspace-member.schema";
-import { ICON_COLUMN_WIDTH } from "@/shared/constants/core.constant";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 
 const createColumnList = (): ResponsiveColumnType[] => {
   return [
-    {
-      title: <WorkspaceMemberAllCheck />,
-      key: "id",
-      dataIndex: "id",
-      align: "center",
-      width: ICON_COLUMN_WIDTH,
-      render: (_: string, record: WorkspaceMemberListType) => {
-        return <WorkspaceMemberItemCheck workspaceMember={record} />;
-      },
-    },
     {
       title: "멤버 이름",
       key: "name",

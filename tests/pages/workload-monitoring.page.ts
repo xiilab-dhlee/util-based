@@ -71,7 +71,7 @@ export class WorkloadMonitoringPage extends BasePage {
    * @param workloadId - 워크로드 ID
    * @param workspaceId - 워크스페이스 ID (required)
    */
-  async gotoMonitoring(workloadId: string, workspaceId: string): Promise<void> {
+  async gotoMonitoring(workloadId: string, workspaceId: number): Promise<void> {
     const fullPath = ROUTES.USER_WORKLOAD_MONITORING(workspaceId, workloadId);
     await this.page.goto(fullPath);
     await this.page.waitForLoadState("networkidle");

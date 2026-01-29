@@ -4,7 +4,8 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { Modal } from "xiilab-ui";
 
-import { useDeleteRequestResource } from "@/domain/request-resource/hooks/use-delete-request-resource";
+// TODO: Orval API 연동 필요
+// import { useDeleteRequestResource } from "@/domain/request-resource/hooks/use-delete-request-resource";
 import { openDeleteRequestResourceModalAtom } from "@/domain/request-resource/state/request-resource.atom";
 import { WORKSPACE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
@@ -32,7 +33,17 @@ export function DeleteRequestResourceModal() {
     null,
   );
 
-  const deleteRequestResource = useDeleteRequestResource();
+  // TODO: Orval API 연동 필요
+  // const deleteRequestResource = useDeleteRequestResource();
+  const deleteRequestResource = {
+    mutate: (
+      _resourceRequestId: number,
+      _options?: { onSuccess?: () => void },
+    ) => {
+      console.log("TODO: Orval API 연동 필요");
+    },
+    isPending: false,
+  };
 
   /**
    * 폼 제출 처리 함수

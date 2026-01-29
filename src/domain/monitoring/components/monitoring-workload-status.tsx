@@ -1,12 +1,11 @@
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
-import type { WorkloadStatusType } from "@/domain/workload/schemas/workload.schema";
 import { getWorkloadStatusInfo } from "@/domain/workload/utils/workload.util";
 import { ALL_OPTION } from "@/shared/constants/core.constant";
 
 interface UserMonitoringWorkloadStatusProps {
-  status: WorkloadStatusType;
+  status: Parameters<typeof getWorkloadStatusInfo>[0];
   total: number;
 }
 

@@ -1,6 +1,6 @@
 import type { ResponsiveColumnType } from "xiilab-ui";
 
-import type { AdminWorkspaceListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { AdminWorkspaceDetailItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import type { WorkspaceSortField } from "@/domain/workspace/constants/workspace.constant";
 import { ROUTES } from "@/shared/constants/routes.constant";
 import type {
@@ -37,7 +37,10 @@ const createColumnList = (
       width: "28%",
       sorter: true,
       sortOrder: getColumnSortOrder(sort, "workspaceName"),
-      render: (workspaceName: string, record: AdminWorkspaceListResponse) => {
+      render: (
+        workspaceName: string,
+        record: AdminWorkspaceDetailItemResponse,
+      ) => {
         return (
           <ColumnLink
             href={ROUTES.ADMIN_WORKSPACE_DETAIL(String(record.workspaceId))}
@@ -77,13 +80,10 @@ const createColumnList = (
       title: "GPU",
       align: "center",
       width: "4%",
-      render: (_, record: AdminWorkspaceListResponse) => {
+      render: (_, record: AdminWorkspaceDetailItemResponse) => {
         return (
           <ColumnAlignCenterWrap>
-            {formatNumberWithUnit(
-              record.resource.utilization.gpu.currentPercent,
-              "%",
-            )}
+            {formatNumberWithUnit(record.resource.gpu.utilization, "%")}
           </ColumnAlignCenterWrap>
         );
       },
@@ -93,7 +93,7 @@ const createColumnList = (
       title: "사용량",
       align: "center",
       width: "5%",
-      render: (_, record: AdminWorkspaceListResponse) => {
+      render: (_, record: AdminWorkspaceDetailItemResponse) => {
         const usedCount = record.resource.gpu?.usedCount;
         return (
           <ColumnAlignCenterWrap>
@@ -107,7 +107,7 @@ const createColumnList = (
       title: "할당량",
       align: "center",
       width: "5%",
-      render: (_, record: AdminWorkspaceListResponse) => {
+      render: (_, record: AdminWorkspaceDetailItemResponse) => {
         const quotaCount = record.resource.gpu?.quotaCount;
         return (
           <ColumnAlignCenterWrap>
@@ -121,13 +121,10 @@ const createColumnList = (
       title: "CPU",
       align: "center",
       width: "4%",
-      render: (_, record: AdminWorkspaceListResponse) => {
+      render: (_, record: AdminWorkspaceDetailItemResponse) => {
         return (
           <ColumnAlignCenterWrap>
-            {formatNumberWithUnit(
-              record.resource.utilization.cpu.currentPercent,
-              "%",
-            )}
+            {formatNumberWithUnit(record.resource.cpu.utilization, "%")}
           </ColumnAlignCenterWrap>
         );
       },
@@ -137,7 +134,7 @@ const createColumnList = (
       title: "사용량",
       align: "center",
       width: "6%",
-      render: (_, record: AdminWorkspaceListResponse) => {
+      render: (_, record: AdminWorkspaceDetailItemResponse) => {
         return (
           <ColumnAlignCenterWrap>
             {formatNumberWithUnit(record.resource.cpu.usedCore, CPU_INFO.unit)}
@@ -150,7 +147,7 @@ const createColumnList = (
       title: "할당량",
       align: "center",
       width: "6%",
-      render: (_, record: AdminWorkspaceListResponse) => {
+      render: (_, record: AdminWorkspaceDetailItemResponse) => {
         return (
           <ColumnAlignCenterWrap>
             {formatNumberWithUnit(record.resource.cpu.quotaCore, CPU_INFO.unit)}
@@ -163,13 +160,10 @@ const createColumnList = (
       title: "Memory",
       align: "center",
       width: "4%",
-      render: (_, record: AdminWorkspaceListResponse) => {
+      render: (_, record: AdminWorkspaceDetailItemResponse) => {
         return (
           <ColumnAlignCenterWrap>
-            {formatNumberWithUnit(
-              record.resource.utilization.memory.currentPercent,
-              "%",
-            )}
+            {formatNumberWithUnit(record.resource.memory.utilization, "%")}
           </ColumnAlignCenterWrap>
         );
       },
@@ -179,7 +173,7 @@ const createColumnList = (
       title: "사용량",
       align: "center",
       width: "7%",
-      render: (_, record: AdminWorkspaceListResponse) => {
+      render: (_, record: AdminWorkspaceDetailItemResponse) => {
         const memUsage = convertBytes(record.resource.memory.usedByte, "GB", 2);
         return (
           <ColumnAlignCenterWrap>
@@ -193,7 +187,7 @@ const createColumnList = (
       title: "할당량",
       align: "center",
       width: "7%",
-      render: (_, record: AdminWorkspaceListResponse) => {
+      render: (_, record: AdminWorkspaceDetailItemResponse) => {
         const memQuota = convertBytes(
           record.resource.memory.quotaByte,
           "GB",

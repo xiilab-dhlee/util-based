@@ -5,8 +5,9 @@ import styled from "styled-components";
 import { Dropdown, Form, FormItem, Icon, Modal } from "xiilab-ui";
 
 import { WORKSPACE_MEMBER_ROLE_OPTIONS } from "@/domain/workspace/constants/workspace.constant";
-import { useUpdateWorkspaceMember } from "@/domain/workspace/hooks/use-update-workspace-member";
-import type { UpdateWorkspaceMemberPayload } from "@/domain/workspace/types/workspace.type";
+// TODO: Orval API 연동 필요 - useUpdateMemberRole 사용
+// import { useUpdateWorkspaceMember } from "@/domain/workspace/hooks/use-update-workspace-member";
+// import type { UpdateWorkspaceMemberPayload } from "@/domain/workspace/types/workspace.type";
 import type { WorkspaceMemberListType } from "@/domain/workspace-member/schemas/workspace-member.schema";
 import { openUpdateWorkspaceMemberModalAtom } from "@/domain/workspace-member/state/workspace-member.atom";
 import { ModalDetailCard } from "@/shared/components/card/modal-detail-card";
@@ -22,31 +23,24 @@ export function UpdateWorkspaceMemberModal() {
     openUpdateWorkspaceMemberModalAtom,
   );
 
-  const updateWorkspaceMember = useUpdateWorkspaceMember();
+  // TODO: Orval API 연동 필요
+  // const updateWorkspaceMember = useUpdateWorkspaceMember();
 
   const [workspaceMember, setWorkspaceMember] =
     useState<WorkspaceMemberListType | null>(null);
 
   const roleSelect = useSelect(null, WORKSPACE_MEMBER_ROLE_OPTIONS);
   const [roleError, setRoleError] = useState<string | null>(null);
-  const isSubmitting = updateWorkspaceMember.isPending;
+  // TODO: Orval API 연동 후 isPending 사용
+  const isSubmitting = false; // updateWorkspaceMember.isPending;
 
   const handleSubmit = () => {
     setRoleError(null);
 
-    const payload = createPayload();
-
-    // TODO: payload 검증 및 유효성 검사 추가 필요
-    if (payload) {
-      // TODO: validation 추가 필요
-      updateWorkspaceMember.mutate(payload);
-    }
-  };
-
-  const createPayload = (): UpdateWorkspaceMemberPayload | null => {
-    return {
-      role: roleSelect.value,
-    };
+    // TODO: Orval API 연동 필요
+    // const payload = { memberRole: roleSelect.value };
+    // updateWorkspaceMember.mutate({ workspaceId, accountId: workspaceMember?.id, data: payload });
+    console.log("TODO: Orval API 연동 필요", { role: roleSelect.value });
   };
 
   useSubscribe<WorkspaceMemberListType>(

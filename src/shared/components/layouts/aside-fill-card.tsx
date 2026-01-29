@@ -48,7 +48,7 @@ const Container = styled.div`
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.15);
   background-color: #fafafa;
   height: 100%;
-  max-height: 920px;
+  max-height: 600px;
 `;
 
 const Header = styled.div`

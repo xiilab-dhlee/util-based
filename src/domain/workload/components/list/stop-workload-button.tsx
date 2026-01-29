@@ -22,7 +22,7 @@ export function StopWorkloadButton({
   const publish = usePublish();
 
   const handleClick = () => {
-    publish(WORKLOAD_EVENTS.sendStopWorkload, workloadId);
+    publish(WORKLOAD_EVENTS.openStopModal, { workloadId });
   };
 
   return (

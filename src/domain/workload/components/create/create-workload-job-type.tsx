@@ -3,12 +3,15 @@
 import { useAtom } from "jotai";
 import styled from "styled-components";
 
+import type { ActiveWorkloadResponseWorkloadJobType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { JobTypeCard } from "@/domain/workload/components/create/job-type-card";
-import type { WorkloadJobType } from "@/domain/workload/constants/workload.constant";
 import { jobTypeAtom } from "@/domain/workload/state/create-workload.atom";
 import { CreateWorkloadSectionTitle } from "@/styles/layers/create-workload-layers.styled";
 
-const JOB_TYPES: WorkloadJobType[] = ["BATCH", "INTERACTIVE"];
+const JOB_TYPES: ActiveWorkloadResponseWorkloadJobType[] = [
+  "BATCH",
+  "INTERACTIVE",
+];
 
 export function CreateWorkloadJobType() {
   const [jobType, setJobType] = useAtom(jobTypeAtom);

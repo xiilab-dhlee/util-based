@@ -9,9 +9,11 @@ import { toast } from "react-toastify";
 import styled from "styled-components";
 import { Button, Icon, Input, Typography } from "xiilab-ui";
 
-import type { VolumeListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type {
+  VolumeListResponse,
+  WorkloadVolumeDetail,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { VolumeSelect } from "@/domain/volume/components/volume-select";
-import type { WorkloadVolumeType } from "@/domain/workload/schemas/workload.schema";
 import { workloadVolumesAtom } from "@/domain/workload/state/create-workload.atom";
 import { CreateModelButton } from "@/shared/components/button/create-model-button";
 import { WorkloadVolumeCard } from "@/shared/components/card/workload-volume-card";
@@ -42,17 +44,13 @@ export function CreateWorkloadVolume() {
         return;
       }
 
-      // VolumeListResponse를 WorkloadVolumeType으로 변환
-      const next: WorkloadVolumeType = {
-        uid: String(volume.volumeId),
-        name: volume.volumeName,
-        creatorName: volume.creatorName,
-        creatorDate: volume.createdAt,
-        storageType: volume.volumeType === "ASTRAGO" ? "ASTRAGO" : "LOCAL",
-        status: volume.isPublic ? "PUBLIC" : "PRIVATE",
-        path: mountPath || "",
-        labels: [],
-        size: volume.fileSizeByte,
+      // VolumeListResponse를 WorkloadVolumeDetail으로 변환
+      const next: WorkloadVolumeDetail = {
+        volumeId: volume.volumeId,
+        volumeName: volume.volumeName,
+        volumeType: volume.volumeType,
+        mountPath: mountPath || "",
+        volumeSize: volume.fileSizeByte,
       };
 
       setVolumes([...volumes, next]);
@@ -62,8 +60,8 @@ export function CreateWorkloadVolume() {
     }
   };
 
-  const handleDeleteVolume = (uid: string) => {
-    setVolumes(volumes.filter((volume) => volume.uid !== uid));
+  const handleDeleteVolume = (volumeId: number) => {
+    setVolumes(volumes.filter((volume) => volume.volumeId !== volumeId));
   };
 
   const handleMountPathChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -143,9 +141,9 @@ export function CreateWorkloadVolume() {
           <SourceCodeCardsContainer>
             {volumes.map((volume) => (
               <WorkloadVolumeCard
-                key={volume.uid}
+                key={volume.volumeId}
                 {...volume}
-                onDelete={() => handleDeleteVolume(volume.uid)}
+                onDelete={() => handleDeleteVolume(volume.volumeId)}
               />
             ))}
             {volumes.length === 0 && (

@@ -21,7 +21,7 @@ export function RestartWorkloadButton({
   const publish = usePublish();
 
   const handleClick = () => {
-    publish(WORKLOAD_EVENTS.sendRestartWorkload, workloadId);
+    publish(WORKLOAD_EVENTS.openRestartModal, { workloadId });
   };
 
   return (

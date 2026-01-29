@@ -4,8 +4,9 @@ import type { ComponentType, ReactNode } from "react";
 import { createElement, useState } from "react";
 import styled from "styled-components";
 
-import type { FileTreeType } from "@/shared/schemas/filetree.schema";
+import { ALL_OPTION } from "@/shared/constants/core.constant";
 import type { CoreFileIndentPosition } from "@/shared/types/core.interface";
+import type { FileTreeType } from "@/shared/types/core.model";
 import { CustomFileNode, RootCustomFileNode } from "./custom-file-node";
 
 /** 파일 체크박스 컴포넌트 props 인터페이스 */
@@ -26,6 +27,7 @@ interface CustomFileTreeProps {
     activeKey: string;
     path?: string;
     type?: "file" | "directory";
+    onFolderClick?: (path: string) => void;
   }>;
   /** 전체 선택 활성화 여부 */
   isActiveRootNode?: boolean;
@@ -230,7 +232,7 @@ export function CustomFileTree({
   const renderRootNode = (): ReactNode => (
     <RootCustomFileNode>
       {createElement(fileButton, {
-        activeKey: "root-node",
+        activeKey: ALL_OPTION.value,
         fileName: "전체",
       })}
     </RootCustomFileNode>

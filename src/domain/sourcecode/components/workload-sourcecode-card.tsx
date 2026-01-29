@@ -3,8 +3,8 @@
 import styled from "styled-components";
 import { Card, Icon, Tag } from "xiilab-ui";
 
+import type { WorkloadSourceCodeDetail } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { getSourcecodeTypeInfo } from "@/domain/sourcecode/utils/sourcecode.util";
-import type { WorkloadSourcecodeType } from "@/domain/workload/schemas/workload.schema";
 import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import {
   LikeCompactCardKey,
@@ -12,30 +12,40 @@ import {
   LikeCompactCardValue,
 } from "@/styles/layers/like-card-layers.styled";
 
-interface WorkloadSourcecodeCardProps extends WorkloadSourcecodeType {
+interface WorkloadSourcecodeCardProps
+  extends Pick<
+    WorkloadSourceCodeDetail,
+    | "sourceCodeId"
+    | "sourceCodeName"
+    | "gitUrl"
+    | "mountPath"
+    | "sourceCodeType"
+  > {
   onDelete?: () => void;
 }
 
 /**
  * 소스 코드 카드 컴포넌트
  */
+/**
+ * 워크로드 소스코드 카드 컴포넌트
+ *
+ * 워크로드에 연결된 소스코드 정보를 표시합니다.
+ */
 export function WorkloadSourcecodeCard({
   sourceCodeName,
   mountPath,
   gitUrl,
   sourceCodeType,
-  isPublic,
   onDelete,
 }: WorkloadSourcecodeCardProps) {
   const { text, tag } = getSourcecodeTypeInfo(sourceCodeType);
-  const isPrivate = isPublic === false;
 
   return (
     <CardWrapper data-testid={WORKLOAD_SELECTOR.SOURCECODE_CARD}>
       <Card
         contentVariant="compact"
         title={sourceCodeName}
-        icon={isPrivate ? <Icon name="Lock" /> : undefined}
         actionElement={
           onDelete ? (
             <IconWrapper onClick={onDelete}>

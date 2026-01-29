@@ -1,13 +1,15 @@
 "use client";
 
 import { useAtom, useAtomValue } from "jotai";
-import { useState } from "react";
+// TODO: Orval API 연동 필요
+// import { useState } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 import { Icon, Modal } from "xiilab-ui";
 
-import { useGetRecentWorkloads } from "@/domain/workload/hooks/use-get-recent-workloads";
-import { useGetWorkloadLazy } from "@/domain/workload/hooks/use-get-workload";
+// TODO: Orval API 연동 필요
+// import { useGetRecentWorkloads } from "@/domain/workload/hooks/use-get-recent-workloads";
+// import { useGetWorkloadLazy } from "@/domain/workload/hooks/use-get-workload";
 import { selectedWorkloadAtom } from "@/domain/workload/state/workload.atom";
 import { createWorkloadColumn } from "@/shared/components/column/create-workload-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
@@ -23,18 +25,31 @@ export function SelectWorkloadModal() {
   const { open, onClose } = useGlobalModal(openSelectWorkloadModalAtom);
   const [selectedWorkload, setSelectedWorkload] = useAtom(selectedWorkloadAtom);
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
-  const [page, setPage] = useState(1);
+  // TODO: Orval API 연동 필요
+  // const [page, setPage] = useState(1);
+  const setPage = (_page: number) => {};
 
-  const { data } = useGetRecentWorkloads(
-    {
-      page: page,
-      size: 8,
-      searchText: "",
-    },
-    open,
-  );
+  // TODO: Orval API 연동 필요
+  // const { data } = useGetRecentWorkloads(
+  //   {
+  //     page: page,
+  //     size: 8,
+  //     searchText: "",
+  //   },
+  //   open,
+  // );
+  const data = { content: [] };
 
-  const { execute, isLoading } = useGetWorkloadLazy();
+  // TODO: Orval API 연동 필요
+  // const { execute, isLoading } = useGetWorkloadLazy();
+  const execute = async (_params: {
+    workloadId: string;
+    workspaceId: number;
+  }) => {
+    console.log("TODO: Orval API 연동 필요");
+    return null;
+  };
+  const isLoading = false;
 
   const handleOk = async () => {
     if (!selectedWorkload) return;

@@ -50,6 +50,7 @@ export function useVolumeFilePermissions({
   const canDecompress =
     canManageFiles &&
     checkedNodesInfo.length === 1 &&
+    checkedNodesInfo[0].type === "file" &&
     isCompressedFile(checkedNodesInfo[0].path);
   const canDelete = canManageFiles && hasCheckedFiles && treeDataLength > 0;
   const canDownload = canManageFiles && hasCheckedFiles;

@@ -2,15 +2,9 @@
 
 import { useSession } from "next-auth/react";
 import { useState } from "react";
-import styled from "styled-components";
 import { Icon, Modal } from "xiilab-ui";
 
 import type { ImageTagListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-import {
-  DetailLabel,
-  DetailRow,
-  DetailValue,
-} from "@/domain/registry/components/shared/detail-row.styles";
 import { useGetRegistryTagDetailByMode } from "@/domain/registry/hooks/use-get-registry-tag-detail-by-mode";
 import type { RegistryMode } from "@/domain/registry/types/registry.type";
 import { ScanStatusText } from "@/shared/components/text/scan-status-text";
@@ -23,6 +17,15 @@ import {
 } from "@/shared/utils/auth.util";
 import { formatDateTimeSafely } from "@/shared/utils/date.util";
 import { formatFileSize } from "@/shared/utils/file.util";
+import {
+  ModalDetailCard,
+  ModalDetailContainer,
+  ModalDetailDivider,
+  ModalDetailLabel,
+  ModalDetailRow,
+  ModalDetailSectionTitle,
+  ModalDetailValue,
+} from "@/styles/layers/modal-detail-layers.styled";
 
 interface TagDetailPayload extends ImageTagListResponse {
   harborImageName: string;
@@ -102,46 +105,48 @@ export function ViewRegistryTagDetailModal({
       showHeaderBorder
       loading={isFetching}
     >
-      <Container>
-        <DetailCard>
-          <SectionTitle>기본 정보</SectionTitle>
-          <DetailRow>
-            <DetailLabel $minWidth="100px">태그명</DetailLabel>
-            <DetailValue>{data?.imageTagName || "-"}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel $minWidth="100px">이미지 크기</DetailLabel>
-            <DetailValue>
+      <ModalDetailContainer>
+        <ModalDetailCard>
+          <ModalDetailSectionTitle>기본 정보</ModalDetailSectionTitle>
+          <ModalDetailRow>
+            <ModalDetailLabel $minWidth="100px">태그명</ModalDetailLabel>
+            <ModalDetailValue>{data?.imageTagName || "-"}</ModalDetailValue>
+          </ModalDetailRow>
+          <ModalDetailRow>
+            <ModalDetailLabel $minWidth="100px">이미지 크기</ModalDetailLabel>
+            <ModalDetailValue>
               {data?.imageSizeByte
                 ? formatFileSize(data.imageSizeByte).formatted
                 : "-"}
-            </DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel $minWidth="100px">설명</DetailLabel>
-            <DetailValue>{data?.description || "-"}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel $minWidth="100px">생성자</DetailLabel>
-            <DetailValue>{data?.creatorName || "-"}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel $minWidth="100px">생성일시</DetailLabel>
-            <DetailValue>{formatDateTimeSafely(data?.createdAt)}</DetailValue>
-          </DetailRow>
+            </ModalDetailValue>
+          </ModalDetailRow>
+          <ModalDetailRow>
+            <ModalDetailLabel $minWidth="100px">설명</ModalDetailLabel>
+            <ModalDetailValue>{data?.description || "-"}</ModalDetailValue>
+          </ModalDetailRow>
+          <ModalDetailRow>
+            <ModalDetailLabel $minWidth="100px">생성자</ModalDetailLabel>
+            <ModalDetailValue>{data?.creatorName || "-"}</ModalDetailValue>
+          </ModalDetailRow>
+          <ModalDetailRow>
+            <ModalDetailLabel $minWidth="100px">생성일시</ModalDetailLabel>
+            <ModalDetailValue>
+              {formatDateTimeSafely(data?.createdAt)}
+            </ModalDetailValue>
+          </ModalDetailRow>
 
-          <Divider />
+          <ModalDetailDivider />
 
-          <SectionTitle>보안 검사 정보</SectionTitle>
-          <DetailRow>
-            <DetailLabel $minWidth="100px">검사 상태</DetailLabel>
-            <DetailValue>
+          <ModalDetailSectionTitle>보안 검사 정보</ModalDetailSectionTitle>
+          <ModalDetailRow>
+            <ModalDetailLabel $minWidth="100px">검사 상태</ModalDetailLabel>
+            <ModalDetailValue>
               <ScanStatusText status={data?.scanStatus} />
-            </DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel $minWidth="100px">검사 결과</DetailLabel>
-            <DetailValue>
+            </ModalDetailValue>
+          </ModalDetailRow>
+          <ModalDetailRow>
+            <ModalDetailLabel $minWidth="100px">검사 결과</ModalDetailLabel>
+            <ModalDetailValue>
               {data?.vulnerability ? (
                 <VulnerabilityTooltip
                   critical={data.vulnerability.criticalCount ?? 0}
@@ -152,42 +157,10 @@ export function ViewRegistryTagDetailModal({
               ) : (
                 "-"
               )}
-            </DetailValue>
-          </DetailRow>
-        </DetailCard>
-      </Container>
+            </ModalDetailValue>
+          </ModalDetailRow>
+        </ModalDetailCard>
+      </ModalDetailContainer>
     </Modal>
   );
 }
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-`;
-
-const DetailCard = styled.div`
-  border-radius: 2px;
-  border: 1px solid #e9e9e9;
-  background: #fff;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 16px;
-  width: 100%;
-`;
-
-const SectionTitle = styled.div`
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 17px;
-  color: #000;
-`;
-
-const Divider = styled.div`
-  width: 100%;
-  height: 1px;
-  background-color: #e0e0e0;
-  margin: 4px 0;
-`;

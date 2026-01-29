@@ -40,6 +40,7 @@ export function CountByWorkloadStatus({
         <Typography.Text
           variant="subtitle-2-1"
           color="#fff"
+          className="truncate"
           data-testid={countTestId}
         >
           {formatNumberWithUnit(count, "건")}

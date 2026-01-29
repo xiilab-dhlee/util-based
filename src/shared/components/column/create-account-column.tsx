@@ -4,6 +4,7 @@ import { TagGroup } from "xiilab-ui";
 
 import type { AccountItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { AccountStatusSwitch } from "@/domain/account-management/components/list/account-status-switch";
+import { DeleteAccountButton } from "@/domain/account-management/components/list/delete-account-button";
 import { ResetPasswordButton } from "@/domain/account-management/components/list/reset-password-button";
 import { UpdateAccountButton } from "@/domain/account-management/components/list/update-account-button";
 import type { AccountSortState } from "@/domain/account-management/constants/account.constant";
@@ -38,7 +39,7 @@ const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
       key: "accountName",
       dataIndex: "accountName",
       align: "left",
-      width: "16%",
+      width: "15%",
       ellipsis: true,
       sorter: true,
       sortOrder: getColumnSortOrder(sort, "accountName"),
@@ -64,7 +65,7 @@ const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
       key: "email",
       dataIndex: "email",
       align: "left",
-      width: "22%",
+      width: "20%",
       ellipsis: true,
       render: (email: string) => {
         return <span data-testid={ACCOUNT_SELECTOR.EMAIL}>{email}</span>;
@@ -75,7 +76,7 @@ const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
       key: "groupName",
       dataIndex: "groupName",
       align: "left",
-      width: "26%",
+      width: "20%",
       render: (groupName: string[]) => {
         if (!groupName || groupName.length === 0) return "-";
         return (
@@ -90,7 +91,7 @@ const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
       key: "accountRole",
       dataIndex: "accountRole",
       align: "center",
-      width: "12%",
+      width: "10%",
       render: (accountRole: AccountRole) => {
         const roleLabel = ACCOUNT_ROLE_LABEL[accountRole] ?? accountRole;
         return <span data-testid={ACCOUNT_SELECTOR.ROLE}>{roleLabel}</span>;
@@ -100,8 +101,8 @@ const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
       title: "가입일",
       key: "createdAt",
       dataIndex: "createdAt",
-      align: "left",
-      width: "6%",
+      align: "center",
+      width: "10%",
       sorter: true,
       sortOrder: getColumnSortOrder(sort, "createdAt"),
       render: (createdAt: string) => {
@@ -130,7 +131,7 @@ const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
       title: "수정",
       key: "update",
       align: "center",
-      width: "5%",
+      width: "6%",
       render: (_, account: AccountItemResponse) => {
         return (
           <ColumnAlignCenterWrap>
@@ -143,11 +144,24 @@ const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
       title: "PW 초기화",
       key: "resetPassword",
       align: "center",
-      width: "5%",
+      width: "6%",
       render: (_, account: AccountItemResponse) => {
         return (
           <ColumnAlignCenterWrap>
             <ResetPasswordButton account={account} />
+          </ColumnAlignCenterWrap>
+        );
+      },
+    },
+    {
+      title: "삭제",
+      key: "delete",
+      align: "center",
+      width: "5%",
+      render: (_, account: AccountItemResponse) => {
+        return (
+          <ColumnAlignCenterWrap>
+            <DeleteAccountButton account={account} />
           </ColumnAlignCenterWrap>
         );
       },

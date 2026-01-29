@@ -23,8 +23,8 @@ export function WorkloadLogButton({
   const isAdmin = isAdminMode(pathname);
 
   const href = isAdmin
-    ? ROUTES.ADMIN_WORKSPACE_WORKLOAD_LOG(workloadId)
-    : ROUTES.USER_WORKLOAD_LOG(String(workspaceId), workloadId);
+    ? ROUTES.ADMIN_WORKSPACE_WORKLOAD_LOG(workspaceId, workloadId)
+    : ROUTES.USER_WORKLOAD_LOG(workspaceId, workloadId);
 
   return (
     <ColumnRouteIcon

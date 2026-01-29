@@ -2,7 +2,8 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { Modal } from "xiilab-ui";
 
-import { useDeleteWorkspaceMember } from "@/domain/workspace/hooks/use-delete-workspace-member";
+// TODO: Orval API 연동 필요
+// import { useDeleteWorkspaceMember } from "@/domain/workspace/hooks/use-delete-workspace-member";
 import { openDeleteWorkspaceMemberModalAtom } from "@/domain/workspace-member/state/workspace-member.atom";
 import { WORKSPACE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
@@ -23,7 +24,14 @@ export function DeleteWorkspaceMemberModal() {
   // 삭제할 워크스페이스 멤버 목록
   const [deleteMembers, setDeleteMembers] = useState<string[]>([]);
 
-  const deleteWorkspaceMember = useDeleteWorkspaceMember();
+  // TODO: Orval API 연동 필요
+  // const deleteWorkspaceMember = useDeleteWorkspaceMember();
+  const deleteWorkspaceMember = {
+    mutate: (_members: string[], _options?: { onSuccess?: () => void }) => {
+      console.log("TODO: Orval API 연동 필요");
+    },
+    isPending: false,
+  };
 
   /**
    * 폼 제출 처리 함수

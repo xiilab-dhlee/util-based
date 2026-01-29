@@ -2,7 +2,7 @@ import type { ResponsiveColumnType } from "xiilab-ui";
 import { Icon } from "xiilab-ui";
 
 import {
-  type ActiveWorkloadItem,
+  type ActiveWorkloadResponse,
   type ActiveWorkloadResponseWorkloadJobType,
   type ActiveWorkloadResponseWorkloadStatus,
   type TerminatedWorkloadItem,
@@ -43,7 +43,7 @@ import {
 // Shared Column Factory Functions
 // ============================================================================
 
-type WorkloadItemBase = ActiveWorkloadItem | TerminatedWorkloadItem;
+type WorkloadItemBase = ActiveWorkloadResponse | TerminatedWorkloadItem;
 type WorkloadJobType = WorkloadItemBase["workloadJobType"];
 
 /**
@@ -171,11 +171,14 @@ const createSharedColumns = <
     align: "center",
     width: "5%",
     render: (_, record: T) => {
+      if (!workspaceId) return null;
+
       const { canDelete } = getActionStates(record);
 
       return (
         <DeleteWorkloadButton
-          workloadId={record.workloadResourceName}
+          workloadResourceName={record.workloadResourceName}
+          workspaceId={workspaceId}
           disabled={!canDelete}
         />
       );
@@ -187,7 +190,7 @@ const createColumnList = (
   workspaceId?: number,
   sort?: ActiveWorkloadSortState,
 ): ResponsiveColumnType[] => {
-  const getActionStates = (record: ActiveWorkloadItem) =>
+  const getActionStates = (record: ActiveWorkloadResponse) =>
     getWorkloadActionStates(record.workloadStatus);
 
   return [
@@ -196,7 +199,7 @@ const createColumnList = (
       title: "선택",
       align: "center",
       width: "5%",
-      render: (_, record: ActiveWorkloadItem) => {
+      render: (_, record: ActiveWorkloadResponse) => {
         return <SelectWorkloadRadio workloadId={record.workloadResourceName} />;
       },
     },
@@ -208,7 +211,7 @@ const createColumnList = (
       width: "24%",
       sorter: true,
       sortOrder: sort ? getColumnSortOrder(sort, "workloadName") : undefined,
-      render: (workloadName: string, record: ActiveWorkloadItem) => {
+      render: (workloadName: string, record: ActiveWorkloadResponse) => {
         if (!workspaceId) return <span>{workloadName || "-"}</span>;
 
         return (
@@ -289,7 +292,7 @@ const createColumnList = (
       title: "로그",
       align: "center",
       width: "5%",
-      render: (_, record: ActiveWorkloadItem) => {
+      render: (_, record: ActiveWorkloadResponse) => {
         if (!workspaceId) return null;
 
         const { canAccessLog } = getActionStates(record);
@@ -307,7 +310,7 @@ const createColumnList = (
       title: "웹터미널",
       align: "center",
       width: "5%",
-      render: (_, record: ActiveWorkloadItem) => {
+      render: (_, record: ActiveWorkloadResponse) => {
         if (!workspaceId) return null;
 
         const { canAccessTerminal } = getActionStates(record);
@@ -326,7 +329,7 @@ const createColumnList = (
       title: "연결",
       align: "center",
       width: "5%",
-      render: (_, record: ActiveWorkloadItem) => {
+      render: (_, record: ActiveWorkloadResponse) => {
         const { canAccessPort } = getActionStates(record);
         const canUsePort = canAccessPort && record.connection.length > 0;
 
@@ -347,7 +350,7 @@ const createColumnList = (
       title: "모니터링",
       align: "center",
       width: "5%",
-      render: (_, record: ActiveWorkloadItem) => {
+      render: (_, record: ActiveWorkloadResponse) => {
         if (!workspaceId) return null;
 
         const { canAccessMonitoring } = getActionStates(record);
@@ -366,7 +369,7 @@ const createColumnList = (
       title: "종료",
       align: "center",
       width: "5%",
-      render: (_, record: ActiveWorkloadItem) => {
+      render: (_, record: ActiveWorkloadResponse) => {
         const { canStop } = getActionStates(record);
 
         return (

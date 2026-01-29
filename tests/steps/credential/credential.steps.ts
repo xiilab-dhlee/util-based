@@ -113,24 +113,6 @@ Then("크리덴셜 추가 모달이 닫힌다", async ({ settingPage }) => {
 });
 
 // ============================================
-// Then - 필드 표시 확인
-// ============================================
-
-Then(
-  "크리덴셜 Private Registry URL 입력창이 표시된다",
-  async ({ settingPage }) => {
-    await settingPage.credentialModal.assertRegistryUrlFieldVisible();
-  },
-);
-
-Then(
-  "크리덴셜 Private Registry URL 입력창이 표시되지 않는다",
-  async ({ settingPage }) => {
-    await settingPage.credentialModal.assertRegistryUrlFieldHidden();
-  },
-);
-
-// ============================================
 // Then - 필드 값 확인
 // ============================================
 

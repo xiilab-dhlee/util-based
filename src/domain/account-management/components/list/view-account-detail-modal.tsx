@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import styled from "styled-components";
-import { Icon, Modal, Typography } from "xiilab-ui";
+import { Icon, Modal } from "xiilab-ui";
 
 import { useGetAccountDetail } from "@/api/generated/admin-account-management/admin-account-management";
 import { getAccountStatusLabelFromBoolean } from "@/domain/account-management/constants/account.constant";
@@ -12,6 +11,15 @@ import { ACCOUNT_SELECTOR } from "@/shared/constants/selector.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { usePublish, useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { formatDateSafely } from "@/shared/utils/date.util";
+import {
+  ModalDetailCard,
+  ModalDetailContainer,
+  ModalDetailDivider,
+  ModalDetailLabel,
+  ModalDetailRow,
+  ModalDetailSectionTitle,
+  ModalDetailValue,
+} from "@/styles/layers/modal-detail-layers.styled";
 
 export function ViewAccountDetailModal() {
   const { open, onOpen, onClose } = useGlobalModal(
@@ -63,118 +71,71 @@ export function ViewAccountDetailModal() {
       showHeaderBorder
       okButtonProps={{ disabled: isFetchingAccountDetail || !accountDetail }}
     >
-      <Container>
-        <DetailCard>
-          <SectionTitle>상세 정보</SectionTitle>
-          <DetailRow>
-            <DetailLabel>이름</DetailLabel>
-            <DetailValue data-testid={ACCOUNT_SELECTOR.DETAIL_NAME}>
+      <ModalDetailContainer>
+        <ModalDetailCard>
+          <ModalDetailSectionTitle>상세 정보</ModalDetailSectionTitle>
+          <ModalDetailRow>
+            <ModalDetailLabel>이름</ModalDetailLabel>
+            <ModalDetailValue data-testid={ACCOUNT_SELECTOR.DETAIL_NAME}>
               {accountDetail?.accountName || "-"}
-            </DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel>이메일</DetailLabel>
-            <DetailValue data-testid={ACCOUNT_SELECTOR.DETAIL_EMAIL}>
+            </ModalDetailValue>
+          </ModalDetailRow>
+          <ModalDetailRow>
+            <ModalDetailLabel>이메일</ModalDetailLabel>
+            <ModalDetailValue data-testid={ACCOUNT_SELECTOR.DETAIL_EMAIL}>
               {accountDetail?.email || "-"}
-            </DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel>그룹</DetailLabel>
-            <DetailValue data-testid={ACCOUNT_SELECTOR.DETAIL_GROUP}>
+            </ModalDetailValue>
+          </ModalDetailRow>
+          <ModalDetailRow>
+            <ModalDetailLabel>그룹</ModalDetailLabel>
+            <ModalDetailValue data-testid={ACCOUNT_SELECTOR.DETAIL_GROUP}>
               {accountDetail?.groupName?.length
                 ? accountDetail.groupName.join(", ")
                 : "-"}
-            </DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel>상태</DetailLabel>
-            <DetailValue data-testid={ACCOUNT_SELECTOR.DETAIL_STATUS}>
+            </ModalDetailValue>
+          </ModalDetailRow>
+          <ModalDetailRow>
+            <ModalDetailLabel>상태</ModalDetailLabel>
+            <ModalDetailValue data-testid={ACCOUNT_SELECTOR.DETAIL_STATUS}>
               {accountDetail?.isEnabled != null
                 ? getAccountStatusLabelFromBoolean(accountDetail.isEnabled)
                 : "-"}
-            </DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel>권한</DetailLabel>
-            <DetailValue data-testid={ACCOUNT_SELECTOR.DETAIL_ROLE}>
+            </ModalDetailValue>
+          </ModalDetailRow>
+          <ModalDetailRow>
+            <ModalDetailLabel>권한</ModalDetailLabel>
+            <ModalDetailValue data-testid={ACCOUNT_SELECTOR.DETAIL_ROLE}>
               {accountDetail?.accountRole || "-"}
-            </DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel>가입일</DetailLabel>
-            <DetailValue data-testid={ACCOUNT_SELECTOR.DETAIL_CREATED_AT}>
+            </ModalDetailValue>
+          </ModalDetailRow>
+          <ModalDetailRow>
+            <ModalDetailLabel>가입일</ModalDetailLabel>
+            <ModalDetailValue data-testid={ACCOUNT_SELECTOR.DETAIL_CREATED_AT}>
               {formatDateSafely(accountDetail?.createdAt)}
-            </DetailValue>
-          </DetailRow>
+            </ModalDetailValue>
+          </ModalDetailRow>
 
-          <Divider />
+          <ModalDetailDivider />
 
-          <SectionTitle>워크스페이스 정보</SectionTitle>
-          <DetailRow>
-            <DetailLabel>생성 개수</DetailLabel>
-            <DetailValue data-testid={ACCOUNT_SELECTOR.DETAIL_WORKSPACE_COUNT}>
+          <ModalDetailSectionTitle>워크스페이스 정보</ModalDetailSectionTitle>
+          <ModalDetailRow>
+            <ModalDetailLabel>생성 개수</ModalDetailLabel>
+            <ModalDetailValue
+              data-testid={ACCOUNT_SELECTOR.DETAIL_WORKSPACE_COUNT}
+            >
               {(accountDetail?.workspaceCount ?? 0).toLocaleString()}개
-            </DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel>생성 제한 개수</DetailLabel>
-            <DetailValue data-testid={ACCOUNT_SELECTOR.DETAIL_WORKSPACE_LIMIT}>
+            </ModalDetailValue>
+          </ModalDetailRow>
+          <ModalDetailRow>
+            <ModalDetailLabel>생성 제한 개수</ModalDetailLabel>
+            <ModalDetailValue
+              data-testid={ACCOUNT_SELECTOR.DETAIL_WORKSPACE_LIMIT}
+            >
               {(accountDetail?.workspaceLimitCount ?? 0).toLocaleString()}개
-            </DetailValue>
-          </DetailRow>
-        </DetailCard>
-      </Container>
+            </ModalDetailValue>
+          </ModalDetailRow>
+        </ModalDetailCard>
+      </ModalDetailContainer>
     </Modal>
   );
 }
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-`;
-
-const DetailCard = styled.div`
-  border-radius: 2px;
-  border: 1px solid #e9e9e9;
-  background: #fff;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 16px;
-  width: 100%;
-`;
-
-const SectionTitle = styled.div`
-
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 17px;
-  color: #000;
-`;
-
-const DetailRow = styled.div`
-  display: flex;
-`;
-
-const DetailLabel = styled(Typography.Text).attrs({
-  variant: "body-2-2",
-})`
-  color: #484848;
-  min-width: 82px;
-  margin-right: 24px;
-`;
-
-const DetailValue = styled(Typography.Text).attrs({
-  variant: "subtitle-2-3",
-})`
-  color: #000;
-`;
-
-const Divider = styled.div`
-  width: 100%;
-  height: 1px;
-  background-color: #e0e0e0;
-  margin: 4px 0;
-`;

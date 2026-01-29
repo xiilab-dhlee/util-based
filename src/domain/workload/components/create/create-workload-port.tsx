@@ -11,7 +11,10 @@ export function CreateWorkloadPort() {
   const [ports, setPorts] = useAtom(portsAtom);
 
   const handleCreate = () => {
-    setPorts((prev) => [...prev, { portName: "", port: "", servicePort: "" }]);
+    setPorts((prev) => [
+      ...prev,
+      { portName: "", portNumber: undefined, servicePortNum: undefined },
+    ]);
   };
 
   const handleDelete = (index: number) => {
@@ -20,12 +23,22 @@ export function CreateWorkloadPort() {
 
   const handleChange = (
     index: number,
-    field: "name" | "port" | "servicePort",
+    field: "portName" | "portNumber" | "servicePortNum",
     value: string,
   ) => {
     setPorts(
       ports.map((port, i) =>
-        i === index ? { ...port, [field]: value } : port,
+        i === index
+          ? {
+              ...port,
+              [field]:
+                field === "portName"
+                  ? value
+                  : value
+                    ? Number(value)
+                    : undefined,
+            }
+          : port,
       ),
     );
   };
@@ -40,21 +53,23 @@ export function CreateWorkloadPort() {
       </Header>
       <Body>
         {ports.map((port, index) => (
-          <Row key={port.portName}>
+          <Row key={`port-${index}`}>
             <StyledInput
-              value={port.portName}
-              onChange={(e) => handleChange(index, "name", e.target.value)}
+              value={port.portName ?? ""}
+              onChange={(e) => handleChange(index, "portName", e.target.value)}
               placeholder="포트 이름 입력"
             />
             <StyledInput
-              value={port.port}
-              onChange={(e) => handleChange(index, "port", e.target.value)}
+              value={port.portNumber?.toString() ?? ""}
+              onChange={(e) =>
+                handleChange(index, "portNumber", e.target.value)
+              }
               placeholder="포트 번호 입력"
             />
             <StyledInput
-              value={port.servicePort}
+              value={port.servicePortNum?.toString() ?? ""}
               onChange={(e) =>
-                handleChange(index, "servicePort", e.target.value)
+                handleChange(index, "servicePortNum", e.target.value)
               }
               placeholder="서비스 포트 번호 입력"
             />

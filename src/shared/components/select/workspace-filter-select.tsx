@@ -4,7 +4,8 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import type { DropdownProps } from "xiilab-ui";
 import { Dropdown } from "xiilab-ui";
 
-import { getAdminAllWorkspaces } from "@/api/generated/admin-workspace/admin-workspace";
+import { getAdminWorkspaceList } from "@/api/generated/admin-workspace/admin-workspace";
+import type { AdminWorkspaceDetailItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { DROPDOWN_LIST_HEIGHT } from "@/shared/constants/core.constant";
 import { useDebouncedSearch } from "@/shared/hooks/use-debounced-search";
 import { useDropdownInfiniteScroll } from "@/shared/hooks/use-infinite-scroll";
@@ -29,7 +30,7 @@ function useWorkspaceOptions(keyword: string) {
   const query = useInfiniteQuery({
     queryKey: [QUERY_KEY, keyword, PAGE_SIZE],
     queryFn: ({ pageParam = 0, signal }) =>
-      getAdminAllWorkspaces(
+      getAdminWorkspaceList(
         {
           pageNo: pageParam,
           pageSize: PAGE_SIZE,
@@ -41,14 +42,14 @@ function useWorkspaceOptions(keyword: string) {
       ),
     getNextPageParam: (lastPage) => {
       if (!lastPage) return undefined;
-      const { currentPageNo, totalPageNum } = lastPage;
-      return currentPageNo < totalPageNum - 1 ? currentPageNo + 1 : undefined;
+      const { currentPage, totalPageNum } = lastPage;
+      return currentPage < totalPageNum - 1 ? currentPage + 1 : undefined;
     },
     initialPageParam: 0,
     select: (data) =>
       data.pages.flatMap(
         (page) =>
-          page?.content?.map((workspace) => ({
+          page?.content?.map((workspace: AdminWorkspaceDetailItemResponse) => ({
             label: workspace.workspaceName,
             value: workspace.workspaceId,
           })) ?? [],

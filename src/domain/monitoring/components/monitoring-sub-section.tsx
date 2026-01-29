@@ -1,257 +1,20 @@
-import type { SorterResult } from "antd/es/table/interface";
-import { useState } from "react";
+"use client";
+
 import styled from "styled-components";
 
+import type { WorkloadStatusResponseWorkloadStatus } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { MonitoringActiveWorkloadArticle } from "@/domain/monitoring/components/monitoring-active-workload-article";
+import { MonitoringUserResourceArticle } from "@/domain/monitoring/components/monitoring-user-resource-article";
 import { MonitoringWorkloadStatus } from "@/domain/monitoring/components/monitoring-workload-status";
-import {
-  ACTIVE_WORKLOAD_PAGE_SIZE,
-  DEFAULT_ACTIVE_WORKLOAD_SORT,
-  DEFAULT_USER_RESOURCE_SORT,
-  DEFAULT_WORKSPACE_SORT,
-} from "@/domain/monitoring/constants/monitoring.constant";
-import { useGetUserResources } from "@/domain/monitoring/hooks/use-get-user-resources";
-import type { UserResourceSchemaType } from "@/domain/monitoring/schemas/user-resource.schema";
-import type {
-  WorkloadListType,
-  WorkloadStatusType,
-} from "@/domain/workload/schemas/workload.schema";
-import { useGetWorkspaces } from "@/domain/workspace/hooks/use-get-workspaces";
-import type { WorkspaceListType } from "@/domain/workspace/schemas/workspace.schema";
-import { createUserResourceColumn } from "@/shared/components/column/create-user-resource-column";
-import { createWorkloadColumn } from "@/shared/components/column/create-workload-column";
-// import { createWorkspaceColumn } from "@/shared/components/column/create-workspace-column";
-import { CustomizedTable } from "@/shared/components/table/customized-table";
-import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
+import { MonitoringWorkspaceArticle } from "@/domain/monitoring/components/monitoring-workspace-article";
 import { UserMonitoringSectionTitle } from "@/styles/layers/user-monitoring-layers.styled";
 
-/**
- * 임시 정렬 타입/유틸 (monitoring 모듈 내부에서만 사용)
- * - 공용 정렬 유틸/타입 의존 제거 목적
- * - 추후 정렬 정책 확정 시 공용 유틸로 재정리 가능
- */
-type SortDirection = "ASC" | "DESC";
-type AntdTableSortOrder = "ascend" | "descend";
-
-type TableSortState = {
-  sortBy: string;
-  sortDirection: SortDirection;
-};
-
-const toSortDirection = (order: AntdTableSortOrder): SortDirection =>
-  order === "ascend" ? "ASC" : "DESC";
-
-const toSortOrder = (direction: SortDirection): AntdTableSortOrder =>
-  direction === "ASC" ? "ascend" : "descend";
-
-const getSortOrder = (
-  sortState: TableSortState,
-  field: string,
-): AntdTableSortOrder | null =>
-  sortState.sortBy === field ? toSortOrder(sortState.sortDirection) : null;
-
-function parseSorter<T>(
-  sorter: SorterResult<T> | SorterResult<T>[],
-): { field: string; direction: SortDirection } | null {
-  const single = Array.isArray(sorter) ? sorter[0] : sorter;
-  if (!single.field || !single.order) return null;
-
-  return {
-    field: String(single.field),
-    direction: toSortDirection(single.order as AntdTableSortOrder),
-  };
-}
-
 export function MonitoringSubSection() {
-  const [workspaceSort, setWorkspaceSort] = useState<TableSortState>(
-    DEFAULT_WORKSPACE_SORT,
-  );
-  const [userResourceSort, setUserResourceSort] = useState<TableSortState>(
-    DEFAULT_USER_RESOURCE_SORT,
-  );
-  const [activeWorkloadSort, setActiveWorkloadSort] = useState<TableSortState>(
-    DEFAULT_ACTIVE_WORKLOAD_SORT,
-  );
-  const [activeWorkloadPage, setActiveWorkloadPage] = useState(1);
-
-  const {
-    data: workspacesData,
-    isLoading: isWorkspacesLoading,
-    isError: isWorkspacesError,
-  } = useGetWorkspaces({
-    page: 1,
-    size: LIST_PAGE_SIZE,
-    searchText: "",
-    sortBy: workspaceSort.sortBy,
-    sortDirection: workspaceSort.sortDirection,
-  });
-
-  const {
-    data: userResourcesData,
-    isLoading: isUserResourcesLoading,
-    isError: isUserResourcesError,
-  } = useGetUserResources({
-    page: 1,
-    size: LIST_PAGE_SIZE,
-    sortBy: userResourceSort.sortBy,
-    sortDirection: userResourceSort.sortDirection,
-  });
-
-  const workspaces = workspacesData?.content ?? [];
-  const userResources = userResourcesData?.content ?? [];
-
-  /** 워크스페이스 테이블 정렬 변경 핸들러 */
-  const handleWorkspaceSortChange = (
-    sorter: SorterResult<WorkspaceListType> | SorterResult<WorkspaceListType>[],
-  ) => {
-    const parsed = parseSorter(sorter);
-    if (parsed) {
-      setWorkspaceSort({
-        sortBy: parsed.field,
-        sortDirection: parsed.direction,
-      });
-      // TODO: 페이지네이션 추가 시 setPage(1) 호출 필요
-    }
-  };
-
-  /** 사용자 리소스 테이블 정렬 변경 핸들러 */
-  const handleUserResourceSortChange = (
-    sorter:
-      | SorterResult<UserResourceSchemaType>
-      | SorterResult<UserResourceSchemaType>[],
-  ) => {
-    const parsed = parseSorter(sorter);
-    if (parsed) {
-      setUserResourceSort({
-        sortBy: parsed.field,
-        sortDirection: parsed.direction,
-      });
-      // TODO: 페이지네이션 추가 시 setPage(1) 호출 필요
-    }
-  };
-
-  /** 활성화 워크로드 테이블 정렬 변경 핸들러 */
-  const handleActiveWorkloadSortChange = (
-    sorter: SorterResult<WorkloadListType> | SorterResult<WorkloadListType>[],
-  ) => {
-    const parsed = parseSorter(sorter);
-    if (parsed) {
-      setActiveWorkloadSort({
-        sortBy: parsed.field,
-        sortDirection: parsed.direction,
-      });
-      setActiveWorkloadPage(1);
-    }
-  };
-
-  // const workspaceColumns = createWorkspaceColumn([
-  // {
-  //   dataIndex: "name",
-  //   width: "20%",
-  //   align: "left",
-  //   sorter: true,
-  //   sortOrder: getSortOrder(workspaceSort, "name"),
-  //   ellipsis: true,
-  // },
-  // { dataIndex: "gpu", width: "9%", align: "center" },
-  // { dataIndex: "cpu", width: "9%", align: "center" },
-  // { dataIndex: "mem", width: "11%", align: "center" },
-  // { dataIndex: "running", width: "9%", align: "center" },
-  // { dataIndex: "pending", width: "9%", align: "center" },
-  // { dataIndex: "error", width: "9%", align: "center" },
-  // { dataIndex: "creatorName", width: "12%", align: "left" },
-  // {
-  //   dataIndex: "creatorDate",
-  //   width: "12%",
-  //   align: "left",
-  //   sorter: true,
-  //   sortOrder: getSortOrder(workspaceSort, "creatorDate"),
-  // },
-  // ]);
-
-  const userResourceColumns = createUserResourceColumn([
-    {
-      key: "userName",
-      width: "20%",
-      align: "left",
-      sorter: true,
-      sortOrder: getSortOrder(userResourceSort, "userName"),
-    },
-    { key: "gpu", width: "16%", align: "center" },
-    { key: "mig", width: "16%", align: "center" },
-    { key: "mps", width: "16%", align: "center" },
-    { key: "cpu", width: "16%", align: "center" },
-    { key: "mem", width: "16%", align: "center" },
-  ]);
-
-  const activeWorkloadColumns = createWorkloadColumn([
-    {
-      key: "workloadName",
-      width: "30%",
-      ellipsis: true,
-      sorter: true,
-      sortOrder: getSortOrder(activeWorkloadSort, "workloadName"),
-    },
-    {
-      key: "nodeName",
-      width: "21%",
-      ellipsis: true,
-    },
-    {
-      key: "jobType",
-      width: "17%",
-      sorter: true,
-      sortOrder: getSortOrder(activeWorkloadSort, "jobType"),
-    },
-    { key: "status", width: "12%" },
-    { key: "creatorName", width: "20%", ellipsis: true },
-  ]);
-
   return (
     <Container>
       <Left>
-        <LeftArticle>
-          <ArticleHeader>
-            <ArticleTitle>
-              <SectionTitle>전체 워크스페이스</SectionTitle>
-              <ArticleDescription>총 24개</ArticleDescription>
-            </ArticleTitle>
-          </ArticleHeader>
-          <LeftBody>
-            <CustomizedTable<WorkspaceListType>
-              columns={[]}
-              data={workspaces}
-              activePadding
-              onChange={(_pagination, _filters, sorter) => {
-                handleWorkspaceSortChange(sorter);
-              }}
-              loading={isWorkspacesLoading}
-              isError={isWorkspacesError}
-            />
-          </LeftBody>
-        </LeftArticle>
-        <LeftArticle>
-          <ArticleHeader>
-            <ArticleTitle>
-              <SectionTitle>사용자별 리소스 점유율</SectionTitle>
-              <ArticleDescription>
-                총 {userResources.length}개
-              </ArticleDescription>
-            </ArticleTitle>
-          </ArticleHeader>
-
-          <LeftBody>
-            <CustomizedTable<UserResourceSchemaType>
-              columns={userResourceColumns}
-              data={userResources}
-              activePadding
-              onChange={(_pagination, _filters, sorter) => {
-                handleUserResourceSortChange(sorter);
-              }}
-              loading={isUserResourcesLoading}
-              isError={isUserResourcesError}
-            />
-          </LeftBody>
-        </LeftArticle>
+        <MonitoringWorkspaceArticle />
+        <MonitoringUserResourceArticle />
       </Left>
       <Right>
         <ArticleTitle style={{ marginBottom: "0" }}>
@@ -261,34 +24,12 @@ export function MonitoringSubSection() {
           {["ALL", "RUNNING", "PENDING", "ERROR"].map((status) => (
             <MonitoringWorkloadStatus
               key={status}
-              status={status as WorkloadStatusType}
+              status={status as WorkloadStatusResponseWorkloadStatus}
               total={9999}
             />
           ))}
         </WorkloadStatuses>
-
-        <div>
-          <ArticleTitle>
-            <SectionTitle>활성화 워크로드 목록</SectionTitle>
-            <ArticleDescription>총 24개</ArticleDescription>
-          </ArticleTitle>
-          <ListArticleBody>
-            <CustomizedTable<WorkloadListType>
-              columns={activeWorkloadColumns}
-              data={[]}
-              activePadding
-              onChange={(_pagination, _filters, sorter) => {
-                handleActiveWorkloadSortChange(sorter);
-              }}
-              pagination={{
-                current: activeWorkloadPage,
-                pageSize: ACTIVE_WORKLOAD_PAGE_SIZE,
-                total: 0,
-                onChange: setActiveWorkloadPage,
-              }}
-            />
-          </ListArticleBody>
-        </div>
+        <MonitoringActiveWorkloadArticle />
       </Right>
     </Container>
   );
@@ -312,17 +53,6 @@ const Left = styled.div`
   width: calc(100% - var(--right-width) - 16px);
 `;
 
-const LeftArticle = styled.article`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 23px;
-  border-radius: 10px;
-  box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.15);
-  overflow: hidden;
-  background-color: #fafafa;
-`;
-
 const Right = styled.article`
   width: var(--right-width);
   flex-shrink: 0;
@@ -337,12 +67,6 @@ const Right = styled.article`
   background-color: #fafafa;
 `;
 
-const ArticleHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-`;
-
 const ArticleTitle = styled.div`
   display: flex;
   justify-content: flex-start;
@@ -351,19 +75,6 @@ const ArticleTitle = styled.div`
   position: relative;
   padding-left: 5px;
   margin-bottom: 20px;
-`;
-
-const ArticleDescription = styled.div`
-  font-weight: 400;
-  font-size: 12px;
-  color: #070913;
-`;
-
-const LeftBody = styled.div`
-  flex: 1;
-  width: 100%;
-  height: 300px;
-  overflow: hidden;
 `;
 
 const SectionTitle = styled(UserMonitoringSectionTitle)`
@@ -378,10 +89,4 @@ const WorkloadStatuses = styled.div`
   height: 86px;
 
   --border-color: #ced2d6;
-`;
-
-const ListArticleBody = styled.div`
-  flex: 1;
-  width: 100%;
-  overflow: hidden;
 `;

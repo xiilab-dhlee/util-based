@@ -53,11 +53,11 @@ export function MonitoringClusterResource({
       </Left>
       <Right>
         <RightHeader>
-          <Typography.Text variant="subtitle-1" color="#f5f5f5">
-            전체
-          </Typography.Text>
+          <Total>전체</Total>
           <Value>
-            <TotalCount>{formatNumber(data.total)}</TotalCount>
+            <TotalCount className="truncate" title={formatNumber(data.total)}>
+              {formatNumber(data.total)}
+            </TotalCount>
             {!isNil(data.total) && <TotalUnit>{unit}</TotalUnit>}
           </Value>
         </RightHeader>
@@ -65,14 +65,18 @@ export function MonitoringClusterResource({
           <Record>
             <Key>요청</Key>
             <Value>
-              <Count>{formatNumber(data.requested)}</Count>
+              <Count className="truncate" title={formatNumber(data.requested)}>
+                {formatNumber(data.requested)}
+              </Count>
               {!isNil(data.requested) && <CountUnit>{unit}</CountUnit>}
             </Value>
           </Record>
           <Record>
             <Key>사용</Key>
             <Value>
-              <Count>{formatNumber(data.used)}</Count>
+              <Count className="truncate" title={formatNumber(data.used)}>
+                {formatNumber(data.used)}
+              </Count>
               {!isNil(data.used) && <CountUnit>{unit}</CountUnit>}
             </Value>
           </Record>
@@ -100,6 +104,7 @@ const Left = styled.div`
   height: 100%;
   overflow: hidden;
   position: relative;
+  flex-shrink: 0;
 `;
 
 const ChartWrapper = styled.div`
@@ -114,6 +119,7 @@ const ChartWrapper = styled.div`
 const Right = styled.div`
   flex: 1;
   padding-right: 20px;
+  overflow: hidden;
 `;
 
 const ChartLabel = styled.div`
@@ -142,6 +148,13 @@ const ChartLabelItem = styled.div`
   }
 `;
 
+const Total = styled(Typography.Text).attrs({
+  variant: "subtitle-1",
+})`
+  white-space: nowrap;
+  color: #f5f5f5;
+`;
+
 const ChartTitle = styled.div`
   font-weight: 500;
   font-size: 16px;
@@ -161,6 +174,7 @@ const RightHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 5px;
 
   padding-bottom: 10px;
   border-bottom: 1px solid #292b32;
@@ -177,12 +191,14 @@ const Record = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 5px;
 `;
 
 const Key = styled.div`
   font-weight: 500;
   font-size: 14px;
   color: #f5f5f5;
+  white-space: nowrap;
 `;
 
 const Value = styled.div`
@@ -192,6 +208,7 @@ const Value = styled.div`
   align-items: flex-end;
   gap: 5px;
   color: #bababa;
+  overflow: hidden;
 `;
 
 const TotalCount = styled.span`

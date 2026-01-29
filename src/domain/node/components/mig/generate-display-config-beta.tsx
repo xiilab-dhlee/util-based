@@ -19,7 +19,7 @@ function generateRowsFromConfig(config: GpuModelConfig): GpuInstanceRow[] {
     nodes: [
       {
         type: "node",
-        name: `${configs[0].compute}g.${configs[0].memory}gb`,
+        name: `${configs[0].compute}g . ${configs[0].memory}gb`,
         gpuIndex: 1,
       },
       {
@@ -27,7 +27,7 @@ function generateRowsFromConfig(config: GpuModelConfig): GpuInstanceRow[] {
         children: [
           {
             type: "node",
-            name: `${configs[1].compute}g.${configs[1].memory}gb`,
+            name: `${configs[1].compute}g . ${configs[1].memory}gb`,
             gpuIndex: 2,
           },
           {
@@ -35,12 +35,12 @@ function generateRowsFromConfig(config: GpuModelConfig): GpuInstanceRow[] {
             children: [
               {
                 type: "node",
-                name: `${configs[2].compute}g.${configs[2].memory}gb`,
+                name: `${configs[2].compute}g . ${configs[2].memory}gb`,
                 gpuIndex: 3,
               },
               {
                 type: "node",
-                name: `${configs[2].compute}g.${configs[2].memory}gb`,
+                name: `${configs[2].compute}g . ${configs[2].memory}gb`,
                 gpuIndex: 4,
               },
             ],
@@ -56,17 +56,17 @@ function generateRowsFromConfig(config: GpuModelConfig): GpuInstanceRow[] {
     nodes: [
       {
         type: "node",
-        name: `${configs[3].compute}g.${configs[3].memory}gb`,
+        name: `${configs[3].compute}g . ${configs[3].memory}gb`,
         gpuIndex: 5,
       },
       {
         type: "node",
-        name: `${configs[3].compute}g.${configs[3].memory}gb`,
+        name: `${configs[3].compute}g . ${configs[3].memory}gb`,
         gpuIndex: 6,
       },
       {
         type: "node",
-        name: `${configs[3].compute}g.${configs[3].memory}gb`,
+        name: `${configs[3].compute}g . ${configs[3].memory}gb`,
         gpuIndex: 7,
       },
     ],
@@ -78,22 +78,22 @@ function generateRowsFromConfig(config: GpuModelConfig): GpuInstanceRow[] {
     nodes: [
       {
         type: "node",
-        name: `${configs[4].compute}g.${configs[4].memory}gb`,
+        name: `${configs[4].compute}g . ${configs[4].memory}gb`,
         gpuIndex: 8,
       },
       {
         type: "node",
-        name: `${configs[4].compute}g.${configs[4].memory}gb`,
+        name: `${configs[4].compute}g . ${configs[4].memory}gb`,
         gpuIndex: 9,
       },
       {
         type: "node",
-        name: `${configs[4].compute}g.${configs[4].memory}gb`,
+        name: `${configs[4].compute}g . ${configs[4].memory}gb`,
         gpuIndex: 10,
       },
       {
         type: "node",
-        name: `${configs[4].compute}g.${configs[4].memory}gb`,
+        name: `${configs[4].compute}g . ${configs[4].memory}gb`,
         gpuIndex: 11,
       },
     ],
@@ -105,17 +105,17 @@ function generateRowsFromConfig(config: GpuModelConfig): GpuInstanceRow[] {
     nodes: [
       {
         type: "node",
-        name: `${configs[4].compute}g.${configs[4].memory}gb`,
+        name: `${configs[4].compute}g . ${configs[4].memory}gb`,
         gpuIndex: 12,
       },
       {
         type: "node",
-        name: `${configs[4].compute}g.${configs[4].memory}gb`,
+        name: `${configs[4].compute}g . ${configs[4].memory}gb`,
         gpuIndex: 13,
       },
       {
         type: "node",
-        name: `${configs[4].compute}g.${configs[4].memory}gb`,
+        name: `${configs[4].compute}g . ${configs[4].memory}gb`,
         gpuIndex: 14,
       },
       {

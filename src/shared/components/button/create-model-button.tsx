@@ -32,6 +32,7 @@ const Container = styled.button`
   line-height: 12px;
   font-weight: 400;
   color: #666666;
+  width: fit-content;
 
   --icon-fill: #666666;
 

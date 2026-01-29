@@ -86,5 +86,5 @@ export default function UserHubLayout({ children }: PropsWithChildren) {
 }
 
 const StyledListPageBody = styled(ListPageBody)`
-  height: 725px;
+  height: 780px;
 `;

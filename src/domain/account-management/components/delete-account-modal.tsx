@@ -10,19 +10,19 @@ import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
 export function DeleteAccountModal() {
   const { open, onOpen, onClose } = useGlobalModal(openDeleteAccountModalAtom);
-  const [deleteAccounts, setDeleteAccounts] = useState<string[]>([]);
+  const [deleteAccountId, setDeleteAccountId] = useState<string | null>(null);
 
   const deleteAccountMutation = useDeleteAccountAction();
   const isPending = deleteAccountMutation.isPending;
 
   const handleOk = () => {
-    if (deleteAccounts.length === 0 || isPending) {
+    if (!deleteAccountId || isPending) {
       toast.error("삭제할 계정을 선택해 주세요.");
       return;
     }
 
     deleteAccountMutation.mutate(
-      { data: { accountId: deleteAccounts } },
+      { accountId: deleteAccountId },
       {
         onSuccess: () => {
           onClose();
@@ -31,8 +31,8 @@ export function DeleteAccountModal() {
     );
   };
 
-  useSubscribe(ACCOUNT_EVENTS.sendDeleteAccount, (accounts: string[]) => {
-    setDeleteAccounts(accounts);
+  useSubscribe(ACCOUNT_EVENTS.sendDeleteAccount, (accountId: string) => {
+    setDeleteAccountId(accountId);
     onOpen();
   });
 
@@ -52,8 +52,7 @@ export function DeleteAccountModal() {
       cancelButtonProps={{ disabled: isPending }}
     >
       <div>
-        선택한 {deleteAccounts.length}개의 계정을 삭제하는 경우 해당 계정에 대한
-        데이터는 원복할 수 없습니다.
+        해당 계정을 삭제하는 경우 계정에 대한 데이터는 원복할 수 없습니다.
       </div>
       <div>계정을 삭제하시겠습니까?</div>
     </Modal>

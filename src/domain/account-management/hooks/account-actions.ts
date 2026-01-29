@@ -9,42 +9,37 @@ import {
 import {
   getGetAccountDetailQueryKey,
   getGetAllAccountsQueryKey,
-  useDeleteAccount,
+  useDeleteAccountSingle,
   useUpdateAccount,
   useUpdateAccountEnabled,
 } from "@/api/generated/admin-account-management/admin-account-management";
 import {
-  accountCheckedListAtom,
   accountPageAtom,
   accountPendingCheckedListAtom,
   accountPendingPageAtom,
 } from "@/domain/account-management/state/account.atom";
 
 export function useDeleteAccountAction(
-  options?: Parameters<typeof useDeleteAccount>[0],
+  options?: Parameters<typeof useDeleteAccountSingle>[0],
 ) {
   const queryClient = useQueryClient();
   const resetPage = useResetAtom(accountPageAtom);
-  const resetCheckedList = useResetAtom(accountCheckedListAtom);
 
-  return useDeleteAccount({
+  return useDeleteAccountSingle({
     ...options,
     mutation: {
       ...options?.mutation,
       onSuccess: (...args) => {
         const [, variables] = args;
 
-        resetCheckedList();
         resetPage();
 
         queryClient.invalidateQueries({
           queryKey: getGetAllAccountsQueryKey(),
         });
 
-        variables.data.accountId.forEach((id) => {
-          queryClient.invalidateQueries({
-            queryKey: getGetAccountDetailQueryKey(id),
-          });
+        queryClient.invalidateQueries({
+          queryKey: getGetAccountDetailQueryKey(variables.accountId),
         });
 
         options?.mutation?.onSuccess?.(...args);

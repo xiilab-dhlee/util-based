@@ -1,12 +1,14 @@
 "use client";
 
-import { useParams } from "next/navigation";
+// TODO: Orval API 연동 필요
+// import { useParams } from "next/navigation";
 import styled from "styled-components";
 import { Button } from "xiilab-ui";
 
 import type { ResourceAllocationData } from "@/domain/workspace/components/detail/update-resource-allocation-modal";
 import { UpdateResourceAllocationModal } from "@/domain/workspace/components/detail/update-resource-allocation-modal";
-import { useGetWorkspace } from "@/domain/workspace/hooks/use-get-workspace";
+// TODO: Orval API 연동 필요
+// import { useGetWorkspace } from "@/domain/workspace/hooks/use-get-workspace";
 import { Slider } from "@/shared/components/slider";
 import { WORKSPACE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
@@ -20,9 +22,19 @@ import { getResourceInfo } from "@/shared/utils/resource.util";
  * MIG(Multi-Instance GPU) 설정도 포함합니다.
  */
 export function WorkspaceResourceAllocCard() {
-  const { id } = useParams();
+  // TODO: Orval API 연동 필요
+  // const { id } = useParams();
   const publish = usePublish();
-  const { data: workspaceData } = useGetWorkspace(id as string);
+  // TODO: Orval API 연동 필요
+  // const { data: workspaceData } = useGetWorkspace(id as string);
+  const workspaceData = null as {
+    gpu: number;
+    gpuQuota: number;
+    cpu: number;
+    cpuQuota: number;
+    mem: number;
+    memQuota: number;
+  } | null;
 
   const gpuValue = workspaceData?.gpu ?? 0;
   const gpuLimit = workspaceData?.gpuQuota ?? 0;

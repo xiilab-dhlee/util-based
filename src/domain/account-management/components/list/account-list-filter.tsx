@@ -5,7 +5,6 @@ import { useResetAtom } from "jotai/utils";
 import { Input } from "xiilab-ui";
 
 import {
-  accountCheckedListAtom,
   accountPageAtom,
   accountSearchTextAtom,
 } from "@/domain/account-management/state/account.atom";
@@ -19,10 +18,8 @@ interface AccountListFilterProps {
 export function AccountListFilter({ totalSize }: AccountListFilterProps) {
   const setSearchText = useSetAtom(accountSearchTextAtom);
   const resetPage = useResetAtom(accountPageAtom);
-  const resetCheckedList = useResetAtom(accountCheckedListAtom);
 
   const handleSearch = (value: string) => {
-    resetCheckedList();
     resetPage();
     setSearchText(value.trim());
   };

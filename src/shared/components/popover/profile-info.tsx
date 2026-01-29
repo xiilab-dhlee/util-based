@@ -259,10 +259,10 @@ const WorkspaceRow = styled.div`
 
 const WorkspaceColumnKey = styled.div`
   font-weight: 400;
-  font-style: Regular;
   font-size: 10px;
   line-height: 12px;
   color: #dfdfe0;
+  white-space: nowrap;
 `;
 
 const WorkspaceColumnValue = styled.div`
@@ -270,6 +270,7 @@ const WorkspaceColumnValue = styled.div`
   font-size: 13px;
   line-height: 16px;
   color: #f5f5f5;
+  white-space: nowrap;
 `;
 
 const ModeSwitchButton = styled(Button)`
