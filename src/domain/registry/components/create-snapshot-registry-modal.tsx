@@ -597,7 +597,6 @@ export function CreateSnapshotRegistryModal({
                         height={138}
                         showCheckBox
                         checked={isSelected}
-                        onCheckboxChange={() => handleSelectWorkload(workload)}
                       >
                         <CardBody>
                           <CompactCardKeyValueRow>
