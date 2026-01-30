@@ -1,9 +1,11 @@
 "use client";
 
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useCallback, useEffect } from "react";
 import { useController, useFormContext } from "react-hook-form";
 import styled from "styled-components";
 
+import { CreateWorkloadBuiltInImageSelect } from "@/domain/workload/components/create/create-workload-built-in-image-select";
 import { CreateWorkloadHubImageSelect } from "@/domain/workload/components/create/create-workload-hub-image-select";
 import { CreateWorkloadImageButton } from "@/domain/workload/components/create/create-workload-image-button";
 import { CreateWorkloadRegistryImageSelect } from "@/domain/workload/components/create/create-workload-registry-image-select";
@@ -55,12 +57,17 @@ export function CreateWorkloadImage() {
     imageTagNameField.onChange(value);
   };
 
-  const resetImageSelection = () => {
+  const resetImageSelection = useCallback(() => {
     harborImageNameField.onChange("");
     imageTagNameField.onChange("");
     setHarborImageName("");
     setImageTagName("");
-  };
+  }, [
+    harborImageNameField,
+    imageTagNameField,
+    setHarborImageName,
+    setImageTagName,
+  ]);
 
   const handleImageTypeChange = (nextType: WorkloadImageType) => {
     if (nextType === imageType) {
@@ -70,6 +77,24 @@ export function CreateWorkloadImage() {
     setImageType(nextType);
     resetImageSelection();
   };
+
+  useEffect(() => {
+    if (canUseHubImage) {
+      return;
+    }
+    if (imageType !== WORKLOAD_IMAGE_TYPES.HUB) {
+      return;
+    }
+    imageTypeField.onChange(null);
+    setImageType(null);
+    resetImageSelection();
+  }, [
+    canUseHubImage,
+    imageType,
+    imageTypeField,
+    resetImageSelection,
+    setImageType,
+  ]);
 
   return (
     <Container>
@@ -104,14 +129,17 @@ export function CreateWorkloadImage() {
         />
       </ImageButtonGroup>
       <ImageSelectionContainer>
-        {imageType === WORKLOAD_IMAGE_TYPES.HUB && (
+        {canUseHubImage && imageType === WORKLOAD_IMAGE_TYPES.HUB && (
           <CreateWorkloadHubImageSelect
             onHarborImageNameChange={handleImageNameChange}
             onImageTagNameChange={handleImageTagChange}
           />
         )}
         {imageType === WORKLOAD_IMAGE_TYPES.BUILT_IN && (
-          <span>준비 중입니다.</span>
+          <CreateWorkloadBuiltInImageSelect
+            onHarborImageNameChange={handleImageNameChange}
+            onImageTagNameChange={handleImageTagChange}
+          />
         )}
         {(imageType === WORKLOAD_IMAGE_TYPES.PRIVATE ||
           imageType === WORKLOAD_IMAGE_TYPES.PUBLIC) && (

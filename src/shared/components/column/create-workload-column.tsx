@@ -154,11 +154,14 @@ const createSharedColumns = <
     align: "center",
     width: "5%",
     render: (_, record: T) => {
+      if (!workspaceId) return null;
+
       const { canRestart } = getActionStates(record);
 
       return (
         <RestartWorkloadButton
-          workloadId={record.workloadResourceName}
+          workloadResourceName={record.workloadResourceName}
+          workspaceId={workspaceId}
           disabled={!canRestart}
         />
       );
@@ -370,11 +373,14 @@ const createColumnList = (
       align: "center",
       width: "5%",
       render: (_, record: ActiveWorkloadResponse) => {
+        if (!workspaceId) return null;
+
         const { canStop } = getActionStates(record);
 
         return (
           <StopWorkloadButton
-            workloadId={record.workloadResourceName}
+            workspaceId={workspaceId}
+            workloadResourceName={record.workloadResourceName}
             disabled={!canStop}
           />
         );

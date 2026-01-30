@@ -8,13 +8,13 @@ import type { GetTerminatedWorkloadsParams } from "@/api/generated/astragoBacken
 import { DisabledWorkloadListBody } from "@/domain/workload/components/list/disabled-workload-list-body";
 import { DisabledWorkloadListFilter } from "@/domain/workload/components/list/disabled-workload-list-filter";
 import { DisabledWorkloadListFooter } from "@/domain/workload/components/list/disabled-workload-list-footer";
-import { RestartWorkloadModal } from "@/domain/workload/components/restart-workload-modal";
 import {
   DISABLED_WORKLOAD_DEFAULT_SORT,
   DISABLED_WORKLOAD_SORT_FIELD_MAP,
 } from "@/domain/workload/constants/workload.constant";
 import { useGetTerminatedWorkloadsWithPolling } from "@/domain/workload/hooks/use-get-terminated-workloads-with-polling";
 import {
+  disabledWorkloadIsMineAtom,
   disabledWorkloadJobTypeAtom,
   disabledWorkloadPageAtom,
   disabledWorkloadSearchTextAtom,
@@ -39,6 +39,7 @@ export function DisabledWorkloadListMain() {
   const searchText = useAtomValue(disabledWorkloadSearchTextAtom);
   const jobType = useAtomValue(disabledWorkloadJobTypeAtom);
   const sort = useAtomValue(disabledWorkloadSortAtom);
+  const hasMine = useAtomValue(disabledWorkloadIsMineAtom);
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
   const workspaceId = selectedWorkspace?.workspaceId;
 
@@ -73,6 +74,7 @@ export function DisabledWorkloadListMain() {
     keyword: searchText || undefined,
     ...(jobType && { workloadJobType: jobType }),
     ...(sortRequest || DISABLED_WORKLOAD_DEFAULT_SORT),
+    hasMine,
   };
 
   const { data, isLoading, isError } = useGetTerminatedWorkloadsWithPolling({
@@ -94,7 +96,6 @@ export function DisabledWorkloadListMain() {
       />
       {/* 비활성화 워크로드 목록 페이지네이션 */}
       <DisabledWorkloadListFooter total={totalSize} isLoading={isLoading} />
-      <RestartWorkloadModal />
     </>
   );
 }

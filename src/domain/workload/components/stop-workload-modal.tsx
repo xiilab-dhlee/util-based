@@ -1,11 +1,13 @@
 "use client";
 
+import { useAtomValue } from "jotai";
 import { useState } from "react";
 import { Icon, Modal } from "xiilab-ui";
 
-import { useTerminateWorkload } from "@/api/generated/workload/workload";
+import { useTerminateWorkloadAction } from "@/domain/workload/hooks/workload-actions";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
+import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 
 /** 이벤트 페이로드 타입 */
 interface StopWorkloadPayload {
@@ -26,9 +28,10 @@ export function StopWorkloadModal() {
   const [workloadResourceName, setWorkloadResourceName] = useState<
     string | null
   >(null);
-  const [workspaceId, setWorkspaceId] = useState<number | null>(null);
+  const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
+  const workspaceId = selectedWorkspace?.workspaceId ?? null;
 
-  const { mutate, isPending } = useTerminateWorkload();
+  const { mutate, isPending } = useTerminateWorkloadAction();
 
   /**
    * 모달 닫기
@@ -65,7 +68,6 @@ export function StopWorkloadModal() {
     WORKLOAD_EVENTS.openStopModal,
     (payload) => {
       setWorkloadResourceName(payload.workloadResourceName);
-      setWorkspaceId(payload.workspaceId);
       setOpen(true);
     },
   );

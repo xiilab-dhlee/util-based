@@ -119,6 +119,10 @@ export function useApproveSignupRequestsAction(
           queryKey: getGetSignupRequestsQueryKey(),
         });
 
+        queryClient.invalidateQueries({
+          queryKey: getGetAllAccountsQueryKey(),
+        });
+
         options?.mutation?.onSuccess?.(...args);
       },
     },

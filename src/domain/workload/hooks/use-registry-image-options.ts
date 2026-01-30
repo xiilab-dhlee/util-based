@@ -52,6 +52,7 @@ export function useRegistryImageOptions({
       const params = {
         pageNo: pageParam,
         pageSize: REGISTRY_PAGE_SIZE,
+        keyword: keyword || undefined,
         workspaceId,
       };
 

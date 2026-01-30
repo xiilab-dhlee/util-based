@@ -36,6 +36,9 @@ const thresholdTooltipTitle = (
   </>
 );
 
+const nodeTooltipTitle =
+  "GPU를 포함하지 않는 노드 선택 시 알림 임계 조건 설정 항목에서 GPU 관련 항목 선택이 제한됩니다.";
+
 function extractThresholdErrors(
   errors: FieldErrors<NotificationFormType>,
 ): (ThresholdFieldError | undefined)[] | undefined {
@@ -147,8 +150,13 @@ export function NotificationInfoSection({
         control={control}
         render={({ field }) => (
           <FormItem
-            label="노드"
-            required
+            label={
+              <SettingsLabel>
+                노드
+                <RequiredMark>*</RequiredMark>
+                <GuideTooltip title={nodeTooltipTitle} maxWidth={500} />
+              </SettingsLabel>
+            }
             htmlFor={MONITORING_NOTIFICATION_FIELD_IDS.nodeName}
             validateStatus={errors.nodeName ? "error" : undefined}
             help={errors.nodeName?.message}

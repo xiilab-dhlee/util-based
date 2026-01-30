@@ -7,12 +7,17 @@ import { usePublish } from "@/shared/hooks/use-pub-sub";
 
 interface AccountStatusSwitchProps {
   account: AccountItemResponse;
+  isDisabled?: boolean;
 }
 
-export function AccountStatusSwitch({ account }: AccountStatusSwitchProps) {
+export function AccountStatusSwitch({
+  account,
+  isDisabled = false,
+}: AccountStatusSwitchProps) {
   const publish = usePublish();
 
   const handleChange = () => {
+    if (isDisabled) return;
     publish(ACCOUNT_EVENTS.sendUpdateAccountStatus, {
       accountId: account.accountId,
       accountName: account.accountName,
@@ -24,6 +29,7 @@ export function AccountStatusSwitch({ account }: AccountStatusSwitchProps) {
     <Switch
       checked={account.isEnabled}
       onChange={handleChange}
+      disabled={isDisabled}
       data-testid={ACCOUNT_SELECTOR.STATUS}
     />
   );

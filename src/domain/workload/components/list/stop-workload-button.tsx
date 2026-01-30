@@ -11,18 +11,23 @@ import {
 } from "@/styles/layers/column-layer.styled";
 
 interface StopWorkloadButtonProps {
-  workloadId: string;
+  workspaceId: number;
+  workloadResourceName: string;
   disabled?: boolean;
 }
 
 export function StopWorkloadButton({
-  workloadId,
+  workloadResourceName,
+  workspaceId,
   disabled,
 }: StopWorkloadButtonProps) {
   const publish = usePublish();
 
   const handleClick = () => {
-    publish(WORKLOAD_EVENTS.openStopModal, { workloadId });
+    publish(WORKLOAD_EVENTS.openStopModal, {
+      workloadResourceName,
+      workspaceId,
+    });
   };
 
   return (

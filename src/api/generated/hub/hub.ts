@@ -43,6 +43,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
+  BaseResponseHubImageResponse,
   BaseResponseListHubSummaryResponse,
   BaseResponsePageResponseFindHubsResponse,
   FindHubSummariesParams,
@@ -176,6 +177,146 @@ export function useFindHubs<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getFindHubsQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * Hub ID로 연결된 Harbor 이미지 정보를 조회합니다. Hub 또는 이미지 정보가 없으면 null을 반환합니다.
+ * @summary HUB 이미지 정보 조회
+ */
+export const findHubImage = (hubId: number, signal?: AbortSignal) => {
+  return customInstance<BaseResponseHubImageResponse>({
+    url: `/api/v1/hubs/${hubId}/image`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getFindHubImageQueryKey = (hubId?: number) => {
+  return [`/api/v1/hubs/${hubId}/image`] as const;
+};
+
+export const getFindHubImageQueryOptions = <
+  TData = Awaited<ReturnType<typeof findHubImage>>,
+  TError = unknown,
+>(
+  hubId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof findHubImage>>, TError, TData>
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getFindHubImageQueryKey(hubId);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof findHubImage>>> = ({
+    signal,
+  }) => findHubImage(hubId, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!hubId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof findHubImage>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type FindHubImageQueryResult = NonNullable<
+  Awaited<ReturnType<typeof findHubImage>>
+>;
+export type FindHubImageQueryError = unknown;
+
+export function useFindHubImage<
+  TData = Awaited<ReturnType<typeof findHubImage>>,
+  TError = unknown,
+>(
+  hubId: number,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof findHubImage>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof findHubImage>>,
+          TError,
+          Awaited<ReturnType<typeof findHubImage>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useFindHubImage<
+  TData = Awaited<ReturnType<typeof findHubImage>>,
+  TError = unknown,
+>(
+  hubId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof findHubImage>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof findHubImage>>,
+          TError,
+          Awaited<ReturnType<typeof findHubImage>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useFindHubImage<
+  TData = Awaited<ReturnType<typeof findHubImage>>,
+  TError = unknown,
+>(
+  hubId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof findHubImage>>, TError, TData>
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary HUB 이미지 정보 조회
+ */
+
+export function useFindHubImage<
+  TData = Awaited<ReturnType<typeof findHubImage>>,
+  TError = unknown,
+>(
+  hubId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof findHubImage>>, TError, TData>
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getFindHubImageQueryOptions(hubId, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

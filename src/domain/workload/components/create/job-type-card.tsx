@@ -10,20 +10,19 @@ import { getWorkloadJobTypeInfo } from "@/domain/workload/utils/workload.util";
 import { JupyterIcon } from "@/shared/components/icon/jupyter-icon";
 import { PytorchIcon } from "@/shared/components/icon/pytorch-icon";
 
-const DESCRIPTION_MAP: Record<WorkloadJobType, string[]> =
-  {
-    BATCH: [
-      "쿠버네티스에서 한 번 실행하고 종료되는 태스크를",
-      "정의하는 워크로드 리소스로 주로 배치 작업,",
-      "크론 작업 등에 사용합니다.",
-    ],
-    INTERACTIVE: [
-      "로컬 / 클라우드 환경에서 쿠버네티스 클러스터를",
-      "관리하고, 애플리케이션을 개발하고 테스트 가능한",
-      "통합 환경을 제공하는 IDE를 사용할 수 있습니다.",
-    ],
-    DISTRIBUTED: [],
-  };
+const DESCRIPTION_MAP: Record<WorkloadJobType, string[]> = {
+  BATCH: [
+    "쿠버네티스에서 한 번 실행하고 종료되는 태스크를",
+    "정의하는 워크로드 리소스로 주로 배치 작업,",
+    "크론 작업 등에 사용합니다.",
+  ],
+  INTERACTIVE: [
+    "로컬 / 클라우드 환경에서 쿠버네티스 클러스터를",
+    "관리하고, 애플리케이션을 개발하고 테스트 가능한",
+    "통합 환경을 제공하는 IDE를 사용할 수 있습니다.",
+  ],
+  DISTRIBUTED: [],
+};
 
 interface JobTypeCardProps {
   type: WorkloadJobType;

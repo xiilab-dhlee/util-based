@@ -4,7 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { Modal } from "xiilab-ui";
 
-import { useDeleteWorkload } from "@/api/generated/workload/workload";
+import { useDeleteWorkloadAction } from "@/domain/workload/hooks/workload-actions";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
 import { ROUTES } from "@/shared/constants/routes.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
@@ -37,7 +37,7 @@ export function DeleteWorkloadModal() {
   >(null);
   const [workspaceId, setWorkspaceId] = useState<number | null>(null);
 
-  const { mutate, isPending } = useDeleteWorkload();
+  const { mutate, isPending } = useDeleteWorkloadAction();
 
   const isUser = isUserMode(pathname);
 

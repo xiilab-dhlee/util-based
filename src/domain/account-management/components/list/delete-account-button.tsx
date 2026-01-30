@@ -7,12 +7,17 @@ import { usePublish } from "@/shared/hooks/use-pub-sub";
 
 interface DeleteAccountButtonProps {
   account: AccountItemResponse;
+  isDisabled?: boolean;
 }
 
-export function DeleteAccountButton({ account }: DeleteAccountButtonProps) {
+export function DeleteAccountButton({
+  account,
+  isDisabled = false,
+}: DeleteAccountButtonProps) {
   const publish = usePublish();
 
   const handleClick = () => {
+    if (isDisabled) return;
     publish(ACCOUNT_EVENTS.sendDeleteAccount, account.accountId);
   };
 
@@ -20,6 +25,7 @@ export function DeleteAccountButton({ account }: DeleteAccountButtonProps) {
     <Button
       icon="Delete"
       onClick={handleClick}
+      disabled={isDisabled}
       data-testid={ACCOUNT_SELECTOR.DELETE_BUTTON}
     />
   );

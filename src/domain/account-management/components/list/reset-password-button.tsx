@@ -7,12 +7,17 @@ import { usePublish } from "@/shared/hooks/use-pub-sub";
 
 interface ResetPasswordButtonProps {
   account: AccountItemResponse;
+  isDisabled?: boolean;
 }
 
-export function ResetPasswordButton({ account }: ResetPasswordButtonProps) {
+export function ResetPasswordButton({
+  account,
+  isDisabled = false,
+}: ResetPasswordButtonProps) {
   const publish = usePublish();
 
   const handleClick = () => {
+    if (isDisabled) return;
     publish(ACCOUNT_EVENTS.sendResetPassword, account);
   };
 
@@ -20,6 +25,7 @@ export function ResetPasswordButton({ account }: ResetPasswordButtonProps) {
     <Button
       icon="Refresh"
       onClick={handleClick}
+      disabled={isDisabled}
       data-testid={ACCOUNT_SELECTOR.RESET_PASSWORD_BUTTON}
     />
   );

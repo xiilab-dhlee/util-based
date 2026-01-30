@@ -193,6 +193,9 @@ export const DEFAULT_RUNNING_WORKLOAD_SORT_API = {
 /** 실행중 워크로드 목록 페이지 크기 */
 export const RUNNING_WORKLOAD_PAGE_SIZE = 10;
 
+/** 워크로드 선택 모달 목록 페이지 크기 */
+export const SELECT_WORKLOAD_MODAL_PAGE_SIZE = 10;
+
 /**
  * 비활성화 워크로드 정렬 필드 매핑
  * API 지원 필드: WORKLOAD_NAME, CREATED_AT, TERMINATED_AT (3개 전부)
@@ -258,7 +261,6 @@ export const WORKLOAD_IMAGE_TYPE_LABEL_MAP: Record<
   PRIVATE: "개인 레지스트리",
   PUBLIC: "공유 레지스트리",
 } as const satisfies Record<keyof typeof WORKLOAD_IMAGE_TYPES, string>;
-
 
 /**
  * 잡 타입에 따른 라벨 반환 (워크로드 공용)

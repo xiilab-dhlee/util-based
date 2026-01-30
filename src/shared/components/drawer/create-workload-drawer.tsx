@@ -1,14 +1,14 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { useEffect } from "react";
+import { useAtom, useAtomValue } from "jotai";
+import { useAtomCallback } from "jotai/utils";
+import { useCallback, useEffect, useRef } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import styled from "styled-components";
 import type { StepItem } from "xiilab-ui";
 import { Button, Drawer, Step, Typography } from "xiilab-ui";
 
-import type { WorkloadDetailResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { CreateSourcecodeModal } from "@/domain/sourcecode/components/create-sourcecode-modal";
 import { CreateAstragoVolumeModal } from "@/domain/volume/components/create-astrago-volume-modal";
 import { CreateOnPremVolumeModal } from "@/domain/volume/components/create-onprem-volume-modal";
@@ -29,7 +29,6 @@ import {
   createWorkloadStepFields,
 } from "@/domain/workload/schemas/create-workload.schema";
 import {
-  distributedTypeAtom,
   envsAtom,
   executionCmdAtom,
   executionDirectoryAtom,
@@ -46,24 +45,16 @@ import {
   portsAtom,
   resourcePresetIdAtom,
   stepAtom,
-  type WorkloadSourcecodeInfoUiType,
-  type WorkloadVolumeInfoUiType,
   workerCountAtom,
   workloadDescriptionAtom,
   workloadNameAtom,
-  workloadSourcecodeInfoMapUiAtom,
   workloadSourcecodesAtom,
-  workloadVolumeInfoMapUiAtom,
   workloadVolumesAtom,
 } from "@/domain/workload/state/create-workload.atom";
-import type {
-  CreateWorkloadPayload,
-  WorkloadJobType,
-} from "@/domain/workload/types/workload.type";
+import type { CreateWorkloadPayload } from "@/domain/workload/types/workload.type";
+import { resetAllWorkloadAtoms } from "@/domain/workload/utils/reset-workload-atoms";
 import { SelectWorkloadModal } from "@/shared/components/modal/select-workload-modal";
-import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
-import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 import { openCreateWorkloadDrawerAtom } from "@/shared/state/modal.atom";
 import { hideScrollbar } from "@/styles/mixins/scrollbar";
@@ -109,54 +100,44 @@ const normalizeImageType = (
 export function CreateWorkloadDrawer() {
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
 
-  const { open, onOpen, onClose } = useGlobalModal(
-    openCreateWorkloadDrawerAtom,
-  );
+  const { open, onClose } = useGlobalModal(openCreateWorkloadDrawerAtom);
 
   const [step, setStep] = useAtom(stepAtom);
 
   // Step 0: Job Type & Meta Data
-  const [jobType, setJobType] = useAtom(jobTypeAtom);
-  const [workloadName, setWorkloadName] = useAtom(workloadNameAtom);
-  const [workloadDescription, setWorkloadDescription] = useAtom(
-    workloadDescriptionAtom,
-  );
-  const [labels, setLabels] = useAtom(labelsAtom);
+  const jobType = useAtomValue(jobTypeAtom);
+  const workloadName = useAtomValue(workloadNameAtom);
+  const workloadDescription = useAtomValue(workloadDescriptionAtom);
+  const labels = useAtomValue(labelsAtom);
   const isDistributedLearning = useAtomValue(isDistributedLearningAtom);
 
   // Step 1: Resource
-  const [nodeMode, setNodeMode] = useAtom(nodeModeAtom);
-  const [nodeName, setNodeName] = useAtom(nodeNameAtom);
-  const [resourcePresetId, setResourcePresetId] = useAtom(resourcePresetIdAtom);
-  const [workerCount, setWorkerCount] = useAtom(workerCountAtom);
-  const setDistributedType = useSetAtom(distributedTypeAtom);
+  const nodeMode = useAtomValue(nodeModeAtom);
+  const nodeName = useAtomValue(nodeNameAtom);
+  const resourcePresetId = useAtomValue(resourcePresetIdAtom);
+  const workerCount = useAtomValue(workerCountAtom);
 
   // Step 2: Image
-  const [imageType, setImageType] = useAtom(imageTypeAtom);
-  const [harborImageName, setHarborImageName] = useAtom(harborImageNameAtom);
-  const [imageTagName, setImageTagName] = useAtom(imageTagNameAtom);
+  const imageType = useAtomValue(imageTypeAtom);
+  const harborImageName = useAtomValue(harborImageNameAtom);
+  const imageTagName = useAtomValue(imageTagNameAtom);
 
   // step 3: Task
-  const [workloadSourcecodes, setWorkloadSourcecodes] = useAtom(
-    workloadSourcecodesAtom,
-  );
-  const [, setWorkloadSourcecodeInfoMapUi] = useAtom(
-    workloadSourcecodeInfoMapUiAtom,
-  );
-  const [workloadVolumes, setWorkloadVolumes] = useAtom(workloadVolumesAtom);
-  const [, setWorkloadVolumeInfoMapUi] = useAtom(workloadVolumeInfoMapUiAtom);
+  const workloadSourcecodes = useAtomValue(workloadSourcecodesAtom);
+  const workloadVolumes = useAtomValue(workloadVolumesAtom);
 
   // step 4: Command
-  const [outputDirectory, setOutputDirectory] = useAtom(outputDirectoryAtom);
-  const [executionDirectory, setExecutionDirectory] = useAtom(
-    executionDirectoryAtom,
-  );
-  const [executionCmd, setExecutionCmd] = useAtom(executionCmdAtom);
-  const [parameter, setParameter] = useAtom(parameterAtom);
-  const [envs, setEnvs] = useAtom(envsAtom);
-  const [ports, setPorts] = useAtom(portsAtom);
+  const outputDirectory = useAtomValue(outputDirectoryAtom);
+  const executionDirectory = useAtomValue(executionDirectoryAtom);
+  const executionCmd = useAtomValue(executionCmdAtom);
+  const parameter = useAtomValue(parameterAtom);
+  const envs = useAtomValue(envsAtom);
+  const ports = useAtomValue(portsAtom);
 
   const isLastStep = step === STEP_ITEMS.length - 1;
+
+  // resetCreateWorkloadState ref for cleanup
+  const resetStateRef = useRef<(() => void) | null>(null);
 
   const getFormValuesFromAtoms = (): CreateWorkloadFormValues => ({
     workloadName,
@@ -250,37 +231,52 @@ export function CreateWorkloadDrawer() {
     setStep((prev) => Math.max(prev - 1, 0));
   };
 
-  const resetCreateWorkloadState = () => {
-    setStep(0);
-    setJobType(WORKLOAD_JOB_TYPES.BATCH);
-    setWorkloadName("");
-    setWorkloadDescription("");
-    setLabels([]);
-    setNodeMode(WORKLOAD_NODE_MODES.SINGLE);
-    setNodeName(null);
-    setResourcePresetId(null);
-    setWorkerCount(null);
-    setDistributedType(null);
-    setHarborImageName("");
-    setImageTagName("");
-    setImageType(null);
-    setWorkloadSourcecodes([]);
-    setWorkloadSourcecodeInfoMapUi({});
-    setWorkloadVolumes([]);
-    setWorkloadVolumeInfoMapUi({});
-    setOutputDirectory(null);
-    setExecutionDirectory(null);
-    setExecutionCmd(null);
-    setParameter([]);
-    setEnvs([]);
-    setPorts([]);
-    reset(getFormValuesFromAtoms());
-  };
+  const resetCreateWorkloadState = useAtomCallback(
+    useCallback(
+      (_get, set) => {
+        resetAllWorkloadAtoms(set);
+        // React Hook Form을 초기값으로 리셋
+        reset({
+          workloadName: "",
+          description: "",
+          label: [],
+          workloadJobType: WORKLOAD_JOB_TYPES.BATCH,
+          nodeType: WORKLOAD_NODE_MODES.SINGLE,
+          resourcePresetId: null,
+          workerCount: undefined,
+          imageType: null,
+          harborImageName: "",
+          imageTagName: "",
+          outputDirectory: undefined,
+          executionDirectory: undefined,
+          executionCmd: undefined,
+          env: [],
+          port: [],
+          sourceCode: undefined,
+          volume: [],
+          parameter: [],
+        });
+      },
+      [reset],
+    ),
+  );
+
+  // cleanup에서 사용할 최신 reset 함수 저장
+  resetStateRef.current = resetCreateWorkloadState;
 
   const handleClose = () => {
     resetCreateWorkloadState();
     onClose();
   };
+
+  // 컴포넌트 언마운트시 atom 초기화 (브라우저 뒤로 가기 대응)
+  useEffect(() => {
+    return () => {
+      // 컴포넌트가 사라질 때 atom 상태 초기화
+      resetStateRef.current?.();
+      onClose();
+    };
+  }, [onClose]);
 
   const createWorkload = useCreateWorkloadAction({
     mutation: {
@@ -367,91 +363,6 @@ export function CreateWorkloadDrawer() {
         return <CreateWorkloadFourthStep />;
     }
   };
-
-  useSubscribe(
-    WORKLOAD_EVENTS.sendCreateWorkload,
-    (eventData: WorkloadDetailResponse) => {
-      // eventData가 없는 경우 워크로드 생성
-      // eventData가 있는 경우 워크로드 복제
-
-      // Step 0: Job Type & Meta Data
-      if (eventData?.workloadJobType) {
-        // 분산 잡 타입인 경우 배치 잡 타입으로 설정
-        if (eventData.workloadJobType === WORKLOAD_JOB_TYPES.DISTRIBUTED) {
-          setJobType(WORKLOAD_JOB_TYPES.BATCH);
-        } else {
-          setJobType(eventData.workloadJobType as WorkloadJobType);
-        }
-      } else {
-        setJobType(WORKLOAD_JOB_TYPES.BATCH);
-      }
-      setWorkloadName(eventData?.workloadName || "");
-      setWorkloadDescription(eventData?.description || "");
-      setLabels([]);
-
-      // Step 1: Resource
-      setNodeMode(eventData?.nodeType || WORKLOAD_NODE_MODES.SINGLE);
-      setNodeName(eventData?.workloadResourceName || null);
-      setResourcePresetId(eventData?.resourcePreset?.resourcePresetId || null);
-      setWorkerCount(eventData?.workerCount || null);
-
-      // Step 2: Image
-      setHarborImageName(eventData?.image?.harborImageName || "");
-      setImageTagName(eventData?.image?.imageTagName || "");
-
-      // step 3: Task
-      setWorkloadSourcecodes(
-        eventData?.sourceCode
-          ? [
-              {
-                sourceCodeId: eventData.sourceCode.sourceCodeId,
-                sourceCodeBranch: eventData.sourceCode.branch,
-                mountPath: eventData.sourceCode.mountPath,
-              },
-            ]
-          : [],
-      );
-      setWorkloadSourcecodeInfoMapUi(
-        eventData?.sourceCode
-          ? ({
-              [eventData.sourceCode.sourceCodeId]: {
-                sourceCodeId: eventData.sourceCode.sourceCodeId,
-                sourceCodeName: eventData.sourceCode.sourceCodeName,
-                gitUrl: eventData.sourceCode.gitUrl,
-                mountPath: eventData.sourceCode.mountPath,
-                sourceCodeType: eventData.sourceCode.sourceCodeType,
-              },
-            } satisfies Record<number, WorkloadSourcecodeInfoUiType>)
-          : {},
-      );
-      setWorkloadVolumes(eventData?.volume || []);
-      setWorkloadVolumeInfoMapUi(
-        (eventData?.volume || []).reduce<
-          Record<number, WorkloadVolumeInfoUiType>
-        >((acc, volume) => {
-          acc[volume.volumeId] = {
-            volumeId: volume.volumeId,
-            volumeName: volume.volumeName,
-            volumeType: volume.volumeType,
-            mountPath: volume.mountPath,
-            fileSizeByte: volume.volumeSize,
-          };
-          return acc;
-        }, {}),
-      );
-
-      // step 4: Command
-      setOutputDirectory(eventData?.outputDirectory || null);
-      setExecutionDirectory(eventData?.executionDirectory || null);
-      setExecutionCmd(eventData?.executionCommand || null);
-      setParameter(eventData?.parameter || []);
-      setEnvs(eventData?.env || []);
-      setPorts(eventData?.port || []);
-
-      setStep(0);
-      onOpen();
-    },
-  );
 
   return (
     <FormProvider {...formMethods}>

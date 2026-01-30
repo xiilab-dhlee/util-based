@@ -5988,6 +5988,38 @@ export interface PageResponseFindHubsResponse {
   content: FindHubsResponse[];
 }
 
+export type BaseResponseHubImageResponseStatus =
+  (typeof BaseResponseHubImageResponseStatus)[keyof typeof BaseResponseHubImageResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseHubImageResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseHubImageResponse {
+  status: BaseResponseHubImageResponseStatus;
+  errorCode?: string;
+  data?: HubImageResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * Hub 이미지 정보 조회 응답
+ */
+export interface HubImageResponse {
+  /** 이미지 태그 ID */
+  imageTagId: number;
+  /** Harbor 이미지 이름 */
+  harborImageName: string;
+  /** 이미지 표시 이름 */
+  imageDisplayName: string;
+  /** 태그 이름 */
+  tagName: string;
+}
+
 export type BaseResponseListHubSummaryResponseStatus =
   (typeof BaseResponseListHubSummaryResponseStatus)[keyof typeof BaseResponseListHubSummaryResponseStatus];
 
