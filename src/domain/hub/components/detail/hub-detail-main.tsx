@@ -1,13 +1,23 @@
 "use client";
 
+import { useAtomCallback } from "jotai/utils";
 import { useParams, useSearchParams } from "next/navigation";
+import { useCallback } from "react";
+import { toast } from "react-toastify";
 import styled from "styled-components";
 import { Button } from "xiilab-ui";
 
+import { useFindHubImage } from "@/api/generated/hub/hub";
 import { ViewHubReadme } from "@/domain/hub/components/detail/view-hub-readme";
+import { WORKLOAD_IMAGE_TYPES } from "@/domain/workload/constants/workload.constant";
+import {
+  harborImageNameAtom,
+  imageTagNameAtom,
+  imageTypeAtom,
+} from "@/domain/workload/state/create-workload.atom";
+import { resetAllWorkloadAtoms } from "@/domain/workload/utils/reset-workload-atoms";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { HUB_SELECTOR } from "@/shared/constants/selector.constant";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { openCreateWorkloadDrawerAtom } from "@/shared/state/modal.atom";
 import {
   AsideDetailContainer,
@@ -16,17 +26,44 @@ import {
 } from "@/styles/layers/aside-detail-layers.styled";
 
 export function HubDetailMain() {
-  const { onOpen } = useGlobalModal(openCreateWorkloadDrawerAtom);
   const params = useParams<{ id: string }>();
   const searchParams = useSearchParams();
   const hubId = Number(params.id);
   const hubName = searchParams.get("name") || "";
 
-  const handleCreateWorkload = () => {
-    // TODO: Hub 이미지 정보를 atom에 설정해야 함
-    // 현재는 drawer만 열기
-    onOpen();
-  };
+  const { data: hubImageData, isLoading: isHubImageLoading } = useFindHubImage(
+    hubId,
+    {
+      query: {
+        enabled: !Number.isNaN(hubId),
+      },
+    },
+  );
+
+  const handleCreateWorkload = useAtomCallback(
+    useCallback(
+      (_get, set) => {
+        if (isHubImageLoading) {
+          return;
+        }
+
+        const harborImageName = hubImageData?.harborImageName?.trim();
+        const tagName = hubImageData?.tagName?.trim();
+
+        if (!harborImageName || !tagName) {
+          toast.error("허브 복제 데이터를 가져오는데 실패했습니다.");
+          return;
+        }
+
+        resetAllWorkloadAtoms(set);
+        set(harborImageNameAtom, harborImageName);
+        set(imageTagNameAtom, tagName);
+        set(imageTypeAtom, WORKLOAD_IMAGE_TYPES.HUB);
+        set(openCreateWorkloadDrawerAtom, true);
+      },
+      [hubImageData, isHubImageLoading],
+    ),
+  );
 
   // 유효하지 않은 Hub ID 체크
   if (!params.id || Number.isNaN(hubId)) {
@@ -52,6 +89,7 @@ export function HubDetailMain() {
           width={120}
           height={30}
           onClick={handleCreateWorkload}
+          disabled={isHubImageLoading}
           data-testid={HUB_SELECTOR.CREATE_WORKLOAD_BUTTON}
         >
           워크로드 생성
