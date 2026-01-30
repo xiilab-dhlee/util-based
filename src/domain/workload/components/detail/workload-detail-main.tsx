@@ -14,7 +14,6 @@ import {
 import { CreateDirectSnapshotImageModal } from "@/domain/workload/components/create-direct-snapshot-image-modal";
 import { WorkloadPrimaryArticle } from "@/domain/workload/components/detail/workload-primary-article";
 import { WorkloadSecondaryArticle } from "@/domain/workload/components/detail/workload-secondary-article";
-import { UpdateWorkloadPresetModal } from "@/domain/workload/components/update-workload-preset-modal";
 import { useWorkloadStatusPolling } from "@/domain/workload/hooks/use-workload-status-polling";
 import { mapCloneDataToAtoms } from "@/domain/workload/utils/map-clone-data-to-atoms";
 import { resetAllWorkloadAtoms } from "@/domain/workload/utils/reset-workload-atoms";
@@ -146,7 +145,6 @@ export function WorkloadDetailMain() {
       <WorkloadSecondaryArticle data={data} workspaceId={workspaceId} />
       <CreateDirectSnapshotImageModal />
       <CreateWorkloadDrawer />
-      <UpdateWorkloadPresetModal />
     </>
   );
 }

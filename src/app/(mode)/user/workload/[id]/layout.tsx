@@ -5,6 +5,7 @@ import { WorkloadDetailPageAside } from "@/domain/workload/components/detail/wor
 import { WorkloadDetailTabs } from "@/domain/workload/components/detail/workload-detail-tabs";
 import { StopWorkloadModal } from "@/domain/workload/components/stop-workload-modal";
 import { UpdateWorkloadModal } from "@/domain/workload/components/update-workload-modal";
+import { UpdateWorkloadPresetModal } from "@/domain/workload/components/update-workload-preset-modal";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import {
   DetailContentSection,
@@ -50,6 +51,8 @@ export default async function WorkloadDetailLayout({
       <DeleteWorkloadModal />
       {/* 워크로드 종료 모달 */}
       <StopWorkloadModal />
+      {/* 워크로드 리소스 프리셋 변경/재시작 모달 */}
+      <UpdateWorkloadPresetModal />
     </>
   );
 }
