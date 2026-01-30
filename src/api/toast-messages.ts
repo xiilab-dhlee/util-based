@@ -135,6 +135,9 @@ export const MUTATION_MESSAGES: Partial<
   [MUTATION_KEYS.deleteWorkspaces]: {
     success: "워크스페이스가 삭제되었습니다.",
   },
+  [MUTATION_KEYS.updateCommitImagePolicy]: {
+    success: "Snapshot Image 자동 생성 설정이 변경되었습니다.",
+  },
 
   // ============================================
   // Credential
