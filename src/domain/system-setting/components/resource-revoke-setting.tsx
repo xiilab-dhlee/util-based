@@ -133,6 +133,7 @@ export function ResourceRevokeSetting() {
         <Switch
           checked={isCommitImageEnabled}
           onChange={handleSnapshotToggle}
+          disabled={isPending}
         />
       </SnapshotImageSection>
 
