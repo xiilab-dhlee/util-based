@@ -46,11 +46,14 @@ async function parseBackendErrorBody(response: Response) {
 export async function POST(request: Request) {
   // 1. 현재 로그인된 사용자 세션 확인
   const session = await getServerSession(authOptions);
-  if (!session?.user?.email) {
-    return jsonWithTrace(
+  const userName =
+    session?.user?.email ??
+    session?.user?.preferred_username ??
+    session?.user?.id;
+  if (!userName) {
+    return NextResponse.json(
       { valid: false, error: "Unauthorized", code: "UNAUTHORIZED" },
       { status: 401 },
-      "error",
     );
   }
 
@@ -62,6 +65,7 @@ export async function POST(request: Request) {
       return jsonWithTrace(
         { valid: false, error: "Password required" },
         { status: 400 },
+
         "error",
       );
     }
@@ -74,7 +78,19 @@ export async function POST(request: Request) {
     );
   }
 
-  // 3. 백엔드 토큰 API 호출로 비밀번호 검증
+  // 3. 필수 환경변수 확인
+  if (!process.env.NEXT_PUBLIC_API_URL || !process.env.AUTH_CLIENT_SECRET) {
+    return NextResponse.json(
+      {
+        valid: false,
+        error: "Server configuration error",
+        code: "MISSING_ENV",
+      },
+      { status: 500 },
+    );
+  }
+
+  // 4. 백엔드 토큰 API 호출로 비밀번호 검증
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/tokens`,
@@ -82,7 +98,7 @@ export async function POST(request: Request) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userName: session.user.email,
+          userName,
           password: password,
           clientSecret: process.env.AUTH_CLIENT_SECRET,
         }),

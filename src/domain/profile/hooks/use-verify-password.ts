@@ -33,7 +33,7 @@ function parseVerifyPasswordErrorResponse(
 }
 
 async function verifyPassword(password: string): Promise<VerifyPasswordResult> {
-  const response = await fetch("/api/verify-password", {
+  const response = await fetch("/internal/verify-password", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ password }),

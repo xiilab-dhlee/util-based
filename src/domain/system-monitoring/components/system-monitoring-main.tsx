@@ -30,8 +30,8 @@ import { PageHeader } from "@/shared/components/layouts/page-header";
 import { hideScrollbar } from "@/styles/mixins/scrollbar";
 
 const TAB_ITEMS: SystemMonitoringTabItem[] = [
-  { key: "gpu", label: "GPU" },
   { key: "system", label: "시스템" },
+  { key: "gpu", label: "GPU" },
 ];
 
 export function SystemMonitoringMain() {
