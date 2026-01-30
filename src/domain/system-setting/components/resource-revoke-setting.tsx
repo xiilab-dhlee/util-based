@@ -153,7 +153,7 @@ export function ResourceRevokeSetting() {
         onOk={handleConfirmOk}
         title={`Snapshot Image 자동 생성 ${pendingChecked ? "활성화" : "비활성화"}`}
         centered
-        okButtonProps={{ loading: isPending }}
+        okButtonProps={{ loading: isPending, disabled: isPending }}
         cancelButtonProps={{ disabled: isPending }}
       >
         Snapshot Image 자동 생성을{" "}
