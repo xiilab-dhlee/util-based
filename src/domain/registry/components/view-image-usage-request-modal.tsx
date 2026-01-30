@@ -79,7 +79,7 @@ export function ViewImageUsageRequestModal() {
   return (
     <Modal
       type="primary"
-      icon={<Icon name="RequestResource" color="#fff" size={20} />}
+      icon={<Icon name="Request" color="#fff" size={20} />}
       modalWidth={560}
       open={open}
       closable={!isPending}

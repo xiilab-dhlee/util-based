@@ -42,7 +42,7 @@ export function ViewUsageRequestButton({
         onClick={handleClick}
         title="사용 요청 상세"
       >
-        <Icon name="RequestResource" color="var(--icon-fill)" size={16} />
+        <Icon name="Request" color="var(--icon-fill)" size={16} />
         <span className="sr-only">사용 요청 상세 버튼</span>
       </ColumnIconWrap>
     </ColumnAlignCenterWrap>

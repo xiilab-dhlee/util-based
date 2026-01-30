@@ -39,7 +39,7 @@ export function RequestUseButton({
         disabled={disabled}
         title="사용 요청 버튼"
       >
-        <Icon name="RequestResource" color="var(--icon-fill)" size={16} />
+        <Icon name="Request" color="var(--icon-fill)" size={16} />
         <span className="sr-only">사용 요청 버튼</span>
       </ColumnIconWrap>
     </ColumnAlignCenterWrap>
