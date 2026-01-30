@@ -21,7 +21,8 @@ import { TooltipHighlightText } from "@/styles/mixins/text";
 export function ResourceRevokeSetting() {
   const queryClient = useQueryClient();
   const { data: policyList } = useGetAllPolicies();
-  const { data: commitImagePolicy } = useGetCommitImagePolicy();
+  const { data: commitImagePolicy, isLoading: isCommitPolicyLoading } =
+    useGetCommitImagePolicy();
   const { mutate: updateCommitImagePolicy, isPending } =
     useUpdateCommitImagePolicy();
 
@@ -133,7 +134,7 @@ export function ResourceRevokeSetting() {
         <Switch
           checked={isCommitImageEnabled}
           onChange={handleSnapshotToggle}
-          disabled={isPending}
+          disabled={isPending || isCommitPolicyLoading}
         />
       </SnapshotImageSection>
 
