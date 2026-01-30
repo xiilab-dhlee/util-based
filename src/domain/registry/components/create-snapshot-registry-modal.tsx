@@ -48,6 +48,25 @@ import { useDebouncedSearch } from "@/shared/hooks/use-debounced-search";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 
+/** 포트 번호 유효성 검사 (1-65535, 정수만) */
+function isValidPortNumber(portStr: string): boolean {
+  if (!portStr) return false;
+  const num = Number(portStr);
+  return (
+    !Number.isNaN(num) &&
+    Number.isInteger(num) &&
+    num >= 1 &&
+    num <= createPrivateSnapshotImageBodyPortItemPortMax
+  );
+}
+
+/** 포트 이름 유효성 검사 (RFC6335: 소문자/숫자/하이픈, 최소 1개 영문자 필수, 최대 15자) */
+function isValidPortName(name: string): boolean {
+  if (!name || name.length > createPrivateSnapshotImageBodyPortItemNameMax)
+    return false;
+  return createPrivateSnapshotImageBodyPortItemNameRegExp.test(name);
+}
+
 interface CreateSnapshotRegistryModalProps {
   mode: RegistryMode;
 }
@@ -167,24 +186,6 @@ export function CreateSnapshotRegistryModal({
 
   const { mutate, isPending } = useCreateSnapshotRegistryByMode(mode);
 
-  // 포트 번호 유효성 검사 (1-65535)
-  const isValidPortNumber = useCallback((portStr: string): boolean => {
-    if (!portStr) return false;
-    const num = Number(portStr);
-    return (
-      !Number.isNaN(num) &&
-      num >= 1 &&
-      num <= createPrivateSnapshotImageBodyPortItemPortMax
-    );
-  }, []);
-
-  // 포트 이름 유효성 검사 (RFC6335: 소문자/숫자/하이픈, 최소 1개 영문자 필수, 최대 15자)
-  const isValidPortName = useCallback((name: string): boolean => {
-    if (!name || name.length > createPrivateSnapshotImageBodyPortItemNameMax)
-      return false;
-    return createPrivateSnapshotImageBodyPortItemNameRegExp.test(name);
-  }, []);
-
   const onSubmit = (data: CreateSnapshotRegistryFormType) => {
     if (!selectedWorkspace) return;
 
@@ -209,6 +210,7 @@ export function CreateSnapshotRegistryModal({
           imageName: data.imageName,
           imageTagName: data.imageTagName,
           workspaceId: selectedWorkspace.workspaceId,
+          description: data.description || undefined,
           env: envData?.length ? envData : undefined,
           port: portData?.length ? portData : undefined,
         },
@@ -240,9 +242,35 @@ export function CreateSnapshotRegistryModal({
         // 이미 선택된 워크로드를 다시 클릭하면 선택 해제
         setSelectedWorkloadKey(null);
         resetField("workloadId");
+        resetField("env");
+        resetField("port");
       } else {
         setSelectedWorkloadKey(workload.workloadResourceName);
         setValue("workloadId", workload.workloadId, { shouldValidate: true });
+
+        // 워크로드의 환경변수 자동 채우기
+        if (workload.env && workload.env.length > 0) {
+          const envData = workload.env.map((e) => ({
+            id: uuidv4(),
+            name: e.name,
+            value: e.value,
+          }));
+          setValue("env", envData);
+        } else {
+          resetField("env");
+        }
+
+        // 워크로드의 포트 자동 채우기
+        if (workload.port && workload.port.length > 0) {
+          const portData = workload.port.map((p) => ({
+            id: uuidv4(),
+            name: p.portName,
+            port: p.portNumber,
+          }));
+          setValue("port", portData);
+        } else {
+          resetField("port");
+        }
       }
     },
     [selectedWorkloadKey, setValue, resetField],
@@ -284,7 +312,7 @@ export function CreateSnapshotRegistryModal({
     <Modal
       type="primary"
       icon={<Icon name="Plus" color="#fff" size={18} />}
-      modalWidth={900}
+      modalWidth={1096}
       open={open}
       title="컨테이너 이미지 생성"
       showCancelButton
@@ -411,7 +439,7 @@ export function CreateSnapshotRegistryModal({
                     />
                   </ButtonWrapper>
                 </DynamicFieldRow>
-                {/* 추가된 데이터 행: 삭제 버튼 */}
+                {/* 추가된 데이터 행: 읽기 전용 + 삭제 버튼 */}
                 {envFields.map((field, index) => (
                   <DynamicFieldRow key={field.id}>
                     <Controller
@@ -421,6 +449,7 @@ export function CreateSnapshotRegistryModal({
                         <FieldInput
                           {...inputField}
                           placeholder="환경변수 키 입력"
+                          disabled
                         />
                       )}
                     />
@@ -431,6 +460,7 @@ export function CreateSnapshotRegistryModal({
                         <FieldInput
                           {...inputField}
                           placeholder="환경변수 값 입력"
+                          disabled
                         />
                       )}
                     />
@@ -490,7 +520,7 @@ export function CreateSnapshotRegistryModal({
                     />
                   </ButtonWrapper>
                 </DynamicFieldRow>
-                {/* 추가된 데이터 행: 삭제 버튼 */}
+                {/* 추가된 데이터 행: 읽기 전용 + 삭제 버튼 */}
                 {portFields.map((field, index) => (
                   <DynamicFieldRow key={field.id}>
                     <Controller
@@ -500,6 +530,7 @@ export function CreateSnapshotRegistryModal({
                         <FieldInput
                           {...inputField}
                           placeholder="포트 이름 입력"
+                          disabled
                         />
                       )}
                     />
@@ -511,14 +542,8 @@ export function CreateSnapshotRegistryModal({
                           {...inputField}
                           type="number"
                           placeholder="포트 번호 입력"
-                          onChange={(e) =>
-                            inputField.onChange(
-                              e.target.value
-                                ? Number(e.target.value)
-                                : undefined,
-                            )
-                          }
                           value={inputField.value ?? ""}
+                          disabled
                         />
                       )}
                     />
@@ -544,7 +569,7 @@ export function CreateSnapshotRegistryModal({
             </Typography.Text>
             <RequiredMark>*</RequiredMark>
             <GuideTooltip
-              title="INTERACTIVE 타입의 워크로드만 스냅샷 이미지 생성이 가능합니다."
+              title="실행 중인 Interactive 타입 워크로드만 스냅샷 이미지 생성이 가능합니다."
               iconSize={14}
             />
           </WorkloadHeader>
@@ -564,14 +589,17 @@ export function CreateSnapshotRegistryModal({
                   const isSelected =
                     selectedWorkloadKey === workload.workloadResourceName;
                   return (
-                    <WorkloadCardWrapper key={workload.workloadResourceName}>
+                    <WorkloadCardWrapper
+                      key={workload.workloadResourceName}
+                      type="button"
+                      onClick={() => handleSelectWorkload(workload)}
+                    >
                       <Card
                         contentVariant="compact"
                         title={workload.workloadName}
                         height={138}
                         showCheckBox
                         checked={isSelected}
-                        onCheckboxChange={() => handleSelectWorkload(workload)}
                       >
                         <CardBody>
                           <CompactCardKeyValueRow>
@@ -685,6 +713,7 @@ const WorkloadSection = styled.div`
   gap: 12px;
   border-left: 1px solid #e9ebee;
   padding-left: 24px;
+  overflow: hidden;
 `;
 
 const WorkloadHeader = styled.div`
@@ -703,6 +732,7 @@ const SearchInput = styled(Input)`
 
 const WorkloadListContainer = styled.div`
   flex: 1;
+  overflow-x: hidden;
   overflow-y: auto;
   border: 1px solid #e9ebee;
   border-radius: 4px;
@@ -736,8 +766,23 @@ const ErrorMessage = styled.div`
   font-size: 12px;
 `;
 
-const WorkloadCardWrapper = styled.div`
+const WorkloadCardWrapper = styled.button`
   cursor: pointer;
+  min-width: 0;
+  overflow: hidden;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+
+  &:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  & > * {
+    cursor: inherit;
+  }
 `;
 
 const CardBody = styled.div`

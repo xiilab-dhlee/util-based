@@ -136,6 +136,7 @@ const SettingGridContainer = styled.div`
 const SettingColumnGroup = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   gap: 8px;
 `;
 

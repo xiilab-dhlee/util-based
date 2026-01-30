@@ -70,7 +70,13 @@ export function CredentialSelect({ value, setValue }: CredentialSelectProps) {
     fetchNextPage,
   });
 
-  const handleChange = (v: string | number) => {
+  const handleChange = (v: string | number | null | undefined) => {
+    // allowClear 클릭 시 undefined가 전달됨
+    if (v === null || v === undefined) {
+      setValue(null);
+      resetKeyword();
+      return;
+    }
     if (typeof v === "number") {
       setValue(v);
       resetKeyword();
@@ -91,6 +97,7 @@ export function CredentialSelect({ value, setValue }: CredentialSelectProps) {
         onPopupScroll={handlePopupScroll}
         loading={isLoading || isFetchingNextPage}
         listHeight={DROPDOWN_LIST_HEIGHT}
+        allowClear
       />
     </div>
   );

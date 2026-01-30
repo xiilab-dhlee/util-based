@@ -1,7 +1,10 @@
 "use client";
 
+import { Icon } from "xiilab-ui";
+
 import type { GetPrivateRegistryListImageSourceType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { SelectOptionCard } from "@/shared/components/card/select-option-card";
+import { ExternalRegistryIcon } from "@/shared/components/icon/external-registry-icon";
 
 // =============================================================================
 // Types
@@ -22,17 +25,20 @@ const CARD_DATA: Record<
     from: string;
     title: string;
     description: string;
+    icon: React.ReactNode;
   }
 > = {
   SNAPSHOT: {
     from: "Workload",
     title: "Snapshot",
     description: "워크로드의 현재 상태를 스냅샷으로 저장합니다.",
+    icon: <Icon name="Workload" size={24} color="#1F5BFF" />,
   },
   EXTERNAL: {
     from: "External",
     title: "External",
     description: "외부 레지스트리에서 이미지를 가져와 등록합니다.",
+    icon: <ExternalRegistryIcon width={24} height={22} color="#1F5BFF" />,
   },
 };
 
@@ -59,6 +65,7 @@ export function RegistryTypeCard({ type, onClick }: RegistryTypeCardProps) {
       from={cardData.from}
       title={cardData.title}
       type={type}
+      icon={cardData.icon}
       description={cardData.description}
       onClick={onClick}
     />

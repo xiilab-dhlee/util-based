@@ -23,9 +23,13 @@ export const createRegistrySchema = z.object({
       "첫 글자는 문자/숫자/밑줄(_)만, 이후 문자/숫자/하이픈(-)/밑줄(_)/점(.)만 사용 가능합니다.",
     ),
   registryChannel: z.nativeEnum(CreateExternalImageRequestRegistryChannel, {
-    required_error: "레지스트리 채널을 선택해 주세요.",
+    errorMap: () => ({ message: "레지스트리 채널을 선택해 주세요." }),
   }),
   credentialId: z.number().optional(),
+  description: z
+    .string()
+    .max(2000, "설명은 최대 2000자까지 입력 가능합니다.")
+    .optional(),
   // workloadId: z.string().optional(),
 });
 // .superRefine((data, ctx) => {
