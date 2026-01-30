@@ -48,6 +48,24 @@ import { useDebouncedSearch } from "@/shared/hooks/use-debounced-search";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 
+/** 포트 번호 유효성 검사 (1-65535) */
+function isValidPortNumber(portStr: string): boolean {
+  if (!portStr) return false;
+  const num = Number(portStr);
+  return (
+    !Number.isNaN(num) &&
+    num >= 1 &&
+    num <= createPrivateSnapshotImageBodyPortItemPortMax
+  );
+}
+
+/** 포트 이름 유효성 검사 (RFC6335: 소문자/숫자/하이픈, 최소 1개 영문자 필수, 최대 15자) */
+function isValidPortName(name: string): boolean {
+  if (!name || name.length > createPrivateSnapshotImageBodyPortItemNameMax)
+    return false;
+  return createPrivateSnapshotImageBodyPortItemNameRegExp.test(name);
+}
+
 interface CreateSnapshotRegistryModalProps {
   mode: RegistryMode;
 }
@@ -167,24 +185,6 @@ export function CreateSnapshotRegistryModal({
 
   const { mutate, isPending } = useCreateSnapshotRegistryByMode(mode);
 
-  // 포트 번호 유효성 검사 (1-65535)
-  const isValidPortNumber = useCallback((portStr: string): boolean => {
-    if (!portStr) return false;
-    const num = Number(portStr);
-    return (
-      !Number.isNaN(num) &&
-      num >= 1 &&
-      num <= createPrivateSnapshotImageBodyPortItemPortMax
-    );
-  }, []);
-
-  // 포트 이름 유효성 검사 (RFC6335: 소문자/숫자/하이픈, 최소 1개 영문자 필수, 최대 15자)
-  const isValidPortName = useCallback((name: string): boolean => {
-    if (!name || name.length > createPrivateSnapshotImageBodyPortItemNameMax)
-      return false;
-    return createPrivateSnapshotImageBodyPortItemNameRegExp.test(name);
-  }, []);
-
   const onSubmit = (data: CreateSnapshotRegistryFormType) => {
     if (!selectedWorkspace) return;
 
@@ -250,7 +250,7 @@ export function CreateSnapshotRegistryModal({
         if (workload.env && workload.env.length > 0) {
           const envData = workload.env.map((e) => ({
             id: uuidv4(),
-            name: e.key,
+            name: e.name,
             value: e.value,
           }));
           setValue("env", envData);
