@@ -80,7 +80,7 @@ export function RequestUseModal() {
   return (
     <Modal
       type="primary"
-      icon={<Icon name="RequestResource" color="#fff" size={18} />}
+      icon={<Icon name="Request" color="#fff" size={18} />}
       modalWidth={400}
       open={open}
       title="이미지 사용 요청"

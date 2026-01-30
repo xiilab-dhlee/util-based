@@ -38,7 +38,7 @@ const CARD_DATA: Record<
     from: "External",
     title: "External",
     description: "외부 레지스트리에서 이미지를 가져와 등록합니다.",
-    icon: <ExternalRegistryIcon width={24} height={22} color="#1F5BFF" />,
+    icon: <ExternalRegistryIcon width={22} height={20} color="#1F5BFF" />,
   },
 };
 

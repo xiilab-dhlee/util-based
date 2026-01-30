@@ -62,6 +62,7 @@ export const MUTATION_KEYS = {
   approveResourceRequest: "approveResourceRequest",
   updatePolicySet: "updatePolicySet",
   deleteWorkspaces: "deleteWorkspaces",
+  updateCommitImagePolicy: "updateCommitImagePolicy",
 
   // ============================================
   // Credential

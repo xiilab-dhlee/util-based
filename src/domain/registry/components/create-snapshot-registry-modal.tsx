@@ -252,7 +252,7 @@ export function CreateSnapshotRegistryModal({
         if (workload.env && workload.env.length > 0) {
           const envData = workload.env.map((e) => ({
             id: uuidv4(),
-            name: e.name,
+            name: e.key,
             value: e.value,
           }));
           setValue("env", envData);
