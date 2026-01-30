@@ -34,12 +34,13 @@ import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
 import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
-// 포트 번호 유효성 검사 (1-65535)
+// 포트 번호 유효성 검사 (1-65535, 정수만)
 const isValidPortNumber = (portStr: string): boolean => {
   if (!portStr) return false;
   const num = Number(portStr);
   return (
     !Number.isNaN(num) &&
+    Number.isInteger(num) &&
     num >= 1 &&
     num <= createPrivateSnapshotImageBodyPortItemPortMax
   );
