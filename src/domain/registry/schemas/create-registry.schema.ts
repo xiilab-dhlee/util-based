@@ -22,12 +22,9 @@ export const createRegistrySchema = z.object({
       /^[a-zA-Z0-9_][a-zA-Z0-9._-]*$/,
       "첫 글자는 문자/숫자/밑줄(_)만, 이후 문자/숫자/하이픈(-)/밑줄(_)/점(.)만 사용 가능합니다.",
     ),
-  registryChannel: z
-    .nativeEnum(CreateExternalImageRequestRegistryChannel)
-    .nullable()
-    .refine((val) => val !== null, {
-      message: "레지스트리 채널을 선택해 주세요.",
-    }),
+  registryChannel: z.nativeEnum(CreateExternalImageRequestRegistryChannel, {
+    errorMap: () => ({ message: "레지스트리 채널을 선택해 주세요." }),
+  }),
   credentialId: z.number().optional(),
   description: z
     .string()

@@ -210,6 +210,7 @@ export function CreateSnapshotRegistryModal({
           imageName: data.imageName,
           imageTagName: data.imageTagName,
           workspaceId: selectedWorkspace.workspaceId,
+          description: data.description || undefined,
           env: envData?.length ? envData : undefined,
           port: portData?.length ? portData : undefined,
         },
